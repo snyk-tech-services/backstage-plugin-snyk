@@ -86,10 +86,8 @@ export SNYK_TOKEN="token 123-123-123-123"
 
 6. Add the following annotations to your entities.
 - `snyk.io/org-name` is the Snyk organization name where your project is. Use the slug (like in url, or in the org settings page), not the display name
-- `snyk.io/project-id-1` is the project ID (see slug in url or ID in project settings)
-If multiple projects (like multiple package.json or pom files, add them with increasing number)
-- `snyk.io/project-id-2` is the project ID (see slug in url or ID in project settings)
-- `snyk.io/project-id-3` is the project ID (see slug in url or ID in project settings)
+- `snyk.io/project-ids` are the project ID (see slug in url or ID in project settings)
+If multiple projects (like multiple package.json or pom files, add them with increasing number), add them comma separated
 ....
 
 
@@ -103,9 +101,7 @@ metadata:
   ....
   annotations:
     snyk.io/org-name: snyk-demo-org
-    snyk.io/project-id-1: 12345678-1234-1234-1234-123456789012
-    snyk.io/project-id-2: 12345678-1234-1234-1234-123456789013
-    snyk.io/project-id-3: 12345678-1234-1234-1234-123456789014
+    snyk.io/project-ids: 12345678-1234-1234-1234-123456789012,12345678-1234-1234-1234-123456789013,12345678-1234-1234-1234-123456789014
   ...
 spec:
   type: service
