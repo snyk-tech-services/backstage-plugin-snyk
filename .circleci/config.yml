@@ -10,7 +10,7 @@ jobs:
 
       steps:
         - checkout
-        - run: yarn add semantic-release @semantic-release/exec --save-dev
+        - run: yarn add semantic-release @semantic-release/exec --dev
         - run:
             name: "Install deps"
             command: |
