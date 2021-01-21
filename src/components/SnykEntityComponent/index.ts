@@ -1,0 +1,1 @@
+export { SnykEntityComponent } from './SnykEntityComponent';

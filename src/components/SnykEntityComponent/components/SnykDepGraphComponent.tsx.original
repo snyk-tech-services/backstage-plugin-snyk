@@ -1,0 +1,96 @@
+
+import React, { FC } from 'react';
+import * as depgraph from '@snyk/dep-graph'
+
+import { DepgraphGetResponseType } from '../../../types/types'
+import Graph from "react-graph-vis";
+
+
+type DepGraphProps = {
+  depGraph: DepgraphGetResponseType
+};       
+
+export const DepGraph: FC<DepGraphProps> = ({depGraph}) => {
+
+  const options = {  
+    "nodes":{  
+      "borderWidth":1,
+      "borderWidthSelected":1,
+      "shape":"box",
+      "color":{  
+        "border":"lightgray",
+        "background":"white",
+        "highlight":{  
+          "border":"lightgray",
+          "background":"lightblue"
+        },
+        "hover":{  
+          "border":"lightgray",
+          "background":"lightblue"
+        }
+      }
+    },
+    "edges":{  
+      "smooth":{  
+        "type":"cubicBezier",
+        "roundness":1
+      },
+      "color":"lightgray"
+    },
+    "layout":{  
+      "hierarchical":{  
+        "direction":"UD",
+        "nodeSpacing":150,
+      }
+    },
+    // "interaction":{  
+    //   "dragNodes":true,
+    //   "navigationButtons":true
+    // },
+    "physics":false,
+    // "autoResize":true,
+    "height": "800"
+  }
+ 
+  const snykGraph: depgraph.DepGraph = depgraph.createFromJSON(depGraph.depGraph as unknown as depgraph.DepGraphData)
+  
+
+  const edgesArray = []
+  const edgeReducer = (accumulator, currentNode) => {
+    currentNode.deps.forEach(dep => {
+      accumulator.push({from: currentNode.pkgId, to: dep.nodeId})
+    }) 
+    return accumulator
+  }
+  const graph = {
+    nodes: depGraph.depGraph.pkgs.map(pkg => {
+                                              let level = 0
+                                              if(typeof pkg.info.version !== 'undefined') {
+                                                level = snykGraph.pkgPathsToRoot(pkg.info as unknown as depgraph.Pkg)[0].length 
+                                              }
+                                              // return { id:pkg.id, label: pkg.id, title: pkg.id, level: level, hidden: level > 2 ? true: false }
+                                              return { id:pkg.id, label: pkg.id, title: pkg.id, level: level }
+                                            }),
+    edges: depGraph.depGraph.graph.nodes.reduce(edgeReducer, edgesArray)
+  }
+  const events = {
+    click: function(event) {
+      var { nodes, edges } = event;
+    }
+  };
+
+// TODO
+// iterate over depgragh.graph.nodes to inject levels in the graph.nodes where pkg.id == depgraph nodeid
+
+  return (
+    <Graph
+      graph={graph}
+      options={options}
+      events={events}
+      // getNetwork={network => {
+        
+      // }}
+    />
+  );
+  
+};
