@@ -68,7 +68,6 @@ export class SnykApiClient implements SnykApi {
           ignored: false
         }
       }
-      console.log(JSON.stringify(body))
       const response = await fetch(
         `${apiUrl}`,
         {

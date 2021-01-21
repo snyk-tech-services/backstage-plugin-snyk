@@ -21,7 +21,12 @@ export const extractTargetShortname = (rawName: string): String => {
 }
 
 export const extractProjectIdFromAnnotations = (annotationsObject: Record<string,string>): Array<string> => {
-    return Object.keys(annotationsObject)
-    .filter(key => key.includes('snyk.io/project-id-'))
-    .map(key => annotationsObject[key]);
+    let projectIds: string[] = Object.keys(annotationsObject)
+    .filter(key => key.includes('snyk.io/project-ids'))
+    if(projectIds && projectIds.length == 1){
+        projectIds = annotationsObject['snyk.io/project-ids'].split(',').map(x => x.replace(' ',''))
+    } else {
+        throw new Error('unexpected project Ids syntax')
+    }
+    return projectIds
 }

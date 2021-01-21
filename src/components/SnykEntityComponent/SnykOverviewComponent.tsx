@@ -21,7 +21,7 @@ export const SnykOverviewComponent: FC<{ entity: Entity }> = ({ entity }:{
 
   if(!entity || !entity?.metadata.annotations 
               || !entity?.metadata.annotations['snyk.io/org-name'] 
-              || !entity?.metadata.annotations['snyk.io/project-id-1'] ){
+              || !entity?.metadata.annotations['snyk.io/project-ids'] ){
     return  <Grid container spacing={2}
               justify="center"
               direction="column"
