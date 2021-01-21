@@ -10,7 +10,7 @@ jobs:
 
       steps:
         - checkout
-        - run: yarn install semantic-release @semantic-release/exec --save-dev
+        - run: yarn add semantic-release @semantic-release/exec --save-dev
         - run:
             name: "Install deps"
             command: |
@@ -23,7 +23,7 @@ jobs:
             fail-on-issues: true
             monitor-on-build: true
             token-variable: SNYK_TOKEN
-        - run: npx semantic-release
+        - run: yarn run semantic-release
 
   build-test:
       docker:
