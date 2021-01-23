@@ -46,6 +46,10 @@ export class SnykApiClient implements SnykApi {
   private readonly discoveryApi: DiscoveryApi;
   private readonly proxyPathBase: string;
 
+  private headers = {
+    'Content-Type': 'application/json',
+    'User-Agent': 'tech-services/backstage-plugin/1.0'
+  }
   constructor(options: Options) {
     
     this.discoveryApi = options.discoveryApi;
@@ -72,9 +76,7 @@ export class SnykApiClient implements SnykApi {
         `${apiUrl}`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: this.headers,
           body: JSON.stringify(body)
         }
       );
@@ -100,9 +102,7 @@ export class SnykApiClient implements SnykApi {
         `${apiUrl}`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: this.headers,
           body: JSON.stringify(body)
         }
       );
@@ -126,9 +126,7 @@ export class SnykApiClient implements SnykApi {
         `${apiUrl}`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: this.headers,
           body: JSON.stringify(body)
         }
       );
@@ -144,7 +142,10 @@ export class SnykApiClient implements SnykApi {
       const backendBaseUrl = await this.getApiUrl();
       const apiUrl = `${backendBaseUrl}/org/${orgName}/project/${projectId}`;
       const response = await fetch(
-        `${apiUrl}`
+        `${apiUrl}`,
+        { 
+          headers: this.headers
+        }
       );
    
       if (response.status >= 400 && response.status < 600) {
@@ -162,9 +163,7 @@ export class SnykApiClient implements SnykApi {
         `${apiUrl}`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: this.headers,
           body: JSON.stringify(body)
         }
       );
@@ -181,7 +180,10 @@ export class SnykApiClient implements SnykApi {
       const backendBaseUrl = await this.getApiUrl();
       const apiUrl = `${backendBaseUrl}/org/${orgName}/project/${projectId}/dep-graph`;
       const response = await fetch(
-        `${apiUrl}`
+        `${apiUrl}`,
+        {
+          headers: this.headers
+        }
       );
    
       if (response.status >= 400 && response.status < 600) {
