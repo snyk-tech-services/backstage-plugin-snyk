@@ -20,7 +20,7 @@ import { MissingAnnotationEmptyState } from '@backstage/core';
 import { SnykEntityComponent } from './SnykEntityComponent/SnykEntityComponent';
 
 const SNYK_ORG_ANNOTATION = 'snyk.io/org-name';
-const SNYK_PROJECT_ANNOTATION = 'snyk.io/project-id-1';
+const SNYK_PROJECT_ANNOTATION = 'snyk.io/project-ids';
 
 export const Router = ({ entity }: { entity: Entity }) => {
   const org = entity.metadata.annotations?.[SNYK_ORG_ANNOTATION]

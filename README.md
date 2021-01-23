@@ -66,7 +66,7 @@ const ServiceEntityPage = ({ entity }: { entity: Entity }) => (
 );
 ```
 
-4. Add snyk proxy config. If using Snyk self hosted, adjust target to https://<YOURHOSTNAME>/api
+4. Add snyk proxy config. If using Snyk self hosted, adjust target to https://<YOURHOSTNAME>/api. User Agent helps us track usage of this plugin so we can invest more in the plugin !
 ```
 proxy:
   ...
@@ -74,6 +74,7 @@ proxy:
   '/snyk':
     target: https://snyk.io/api/v1
     headers:
+      User-Agent: tech-services/backstage-plugin/1.0
       Authorization:
         $env: SNYK_TOKEN
   ...
