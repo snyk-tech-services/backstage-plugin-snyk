@@ -118,3 +118,16 @@ spec:
 `export SNYK_TOKEN="token <TOKEN>"`\
 
     ![Missing/wrong token](https://storage.googleapis.com/snyk-technical-services.appspot.com/backstage-screenshots/backstage_card_error_wrong_or_missing_token.png)
+
+
+- 404s from Snyk API? Add [pathRewrite your app-config.yaml proxy](https://github.com/snyk-tech-services/backstage-plugin-snyk/issues/11) to the following
+```
+'/snyk':
+    target: https://snyk.io/api/v1
+    headers:
+      User-Agent: tech-services/backstage-plugin/1.0
+      Authorization:
+        $env: SNYK_TOKEN
+    pathRewrite:
+      '^/proxy/snyk/': '/'
+```
