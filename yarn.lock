@@ -10459,10 +10459,10 @@ react-beautiful-dnd@13.0.0:
     redux "^4.0.4"
     use-memo-one "^1.1.1"
 
-react-circular-progressbar@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/react-circular-progressbar/-/react-circular-progressbar-2.0.3.tgz#fa8eb59f8db168d2904bae4590641792c80f5991"
-  integrity sha512-YKN+xAShXA3gYihevbQZbavfiJxo83Dt1cUxqg/cltj4VVsRQpDr7Fg1mvjDG3x1KHGtd9NmYKvJ2mMrPwbKyw==
+react-circular-progressbar@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/react-circular-progressbar/-/react-circular-progressbar-2.0.4.tgz#5b04a9cf6be8c522c180e4e99ec6db63677335b0"
+  integrity sha512-OfX0ThSxRYEVGaQSt0DlXfyl5w4DbXHsXetyeivmoQrh9xA9bzVPHNf8aAhOIiwiaxX2WYWpLDB3gcpsDJ9oww==
 
 react-dev-utils@^10.2.1:
   version "10.2.1"

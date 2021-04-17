@@ -17,7 +17,7 @@
     "@material-ui/lab": "4.0.0-alpha.45",
     "@mdi/js": "^5.6.55",
     "@snyk/dep-graph": "^1.23.1",
-    "react-circular-progressbar": "^2.0.3"
+    "react-circular-progressbar": "^2.0.4"
   },
   "devDependencies": {
     "@backstage/cli": "^0.4.5",
