@@ -2,11 +2,12 @@ import { issuesCount, IssuesArray } from '../types/types'
 
 export const getIssuesCount = (issues: IssuesArray):issuesCount => {
 
+const criticalSevCount = issues.issues.filter(issue => issue.issueData.severity == 'critical').length    
 const highSevCount = issues.issues.filter(issue => issue.issueData.severity == 'high').length
 const mediumSevCount = issues.issues.filter(issue => issue.issueData.severity == 'medium').length
 const lowSevCount = issues.issues.filter(issue => issue.issueData.severity == 'low').length
 
- return {high: highSevCount, medium: mediumSevCount,low: lowSevCount}
+ return {critical: criticalSevCount, high: highSevCount, medium: mediumSevCount,low: lowSevCount}
 }
 
 export const extractTargetShortname = (rawName: string): String => {

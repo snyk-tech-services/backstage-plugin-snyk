@@ -1,4 +1,5 @@
 export type issuesCount = {
+    critical: number,
     high: number,
     medium: number,
     low: number,
@@ -226,6 +227,10 @@ export interface ProjectGetResponseType {
          * Number of high severity vulnerabilities
          */
         high?: number;
+        /**
+         * Number of critical severity vulnerabilities
+         */
+        critical?: number;
     };
     /**
      * For docker projects shows the ID of the image
@@ -406,6 +411,10 @@ export interface ProjectsPostResponseType {
              * Number of high severity vulnerabilities
              */
             high?: number;
+            /**
+             * Number of critical severity vulnerabilities
+             */
+            critical?: number;
         };
         /**
          * For docker projects shows the ID of the image
