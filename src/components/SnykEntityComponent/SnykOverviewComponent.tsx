@@ -59,13 +59,10 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
   }
 
   const snykApi = useApi(snykApiRef);
-  // const configApi = useApi(configApiRef);
-  // const backendBaseUrl = configApi.getString('backend.baseUrl');
   const orgName = entity?.metadata.annotations?.["snyk.io/org-name"] || "null";
 
   const counterContentStyle = { height: "50%" };
 
-  console.log(`orgName is ${orgName}`);
 
   const { value, loading, error } = useAsync(async () => {
     let aggregatedIssuesCount: issuesCount = {
@@ -105,6 +102,7 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
           projectIds[i]
         );
         const currentProjectIssuesCount = utils.getIssuesCount(vulnsIssues);
+        aggregatedIssuesCount.critical += currentProjectIssuesCount.critical;
         aggregatedIssuesCount.high += currentProjectIssuesCount.high;
         aggregatedIssuesCount.medium += currentProjectIssuesCount.medium;
         aggregatedIssuesCount.low += currentProjectIssuesCount.low;
