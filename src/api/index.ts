@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import { createApiRef, DiscoveryApi } from '@backstage/core';
+import { ApiRef, createApiRef, DiscoveryApi } from "@backstage/core";
 
-
-const DEFAULT_PROXY_PATH_BASE = '';
+const DEFAULT_PROXY_PATH_BASE = "";
 
 type Options = {
   discoveryApi: DiscoveryApi;
@@ -27,14 +26,17 @@ type Options = {
   proxyPathBase?: string;
 };
 //@ts-ignore
-export const snykApiRef = createApiRef<SnykApi>({
-  id: 'plugin.snyk.service',
-  description: 'Used by the Snyk plugin to make requests',
+export const snykApiRef: ApiRef<SnykApi> = createApiRef<SnykApi>({
+  id: "plugin.snyk.service",
+  description: "Used by the Snyk plugin to make requests",
 });
 
 export interface SnykApi {
   ListAllAggregatedIssues(orgName: string, projectId: string): Promise<any>;
-  ListAllAggregatedLicenseIssues(orgName: string, projectId: string): Promise<any>;
+  ListAllAggregatedLicenseIssues(
+    orgName: string,
+    projectId: string
+  ): Promise<any>;
   ListAllIgnoredIssues(orgName: string, projectId: string): Promise<any>;
   ProjectDetails(orgName: string, projectId: string): Promise<any>;
   ProjectList(orgName: string): Promise<any>;
@@ -42,154 +44,143 @@ export interface SnykApi {
 }
 
 export class SnykApiClient implements SnykApi {
-
   private readonly discoveryApi: DiscoveryApi;
   private readonly proxyPathBase: string;
 
   private headers = {
-    'Content-Type': 'application/json',
-    'User-Agent': 'tech-services/backstage-plugin/1.0'
-  }
+    "Content-Type": "application/json",
+    "User-Agent": "tech-services/backstage-plugin/1.0",
+  };
   constructor(options: Options) {
-    
     this.discoveryApi = options.discoveryApi;
     this.proxyPathBase = options.proxyPathBase ?? DEFAULT_PROXY_PATH_BASE;
   }
 
   private async getApiUrl() {
-    const baseUrl = await this.discoveryApi.getBaseUrl('proxy');
+    const baseUrl = await this.discoveryApi.getBaseUrl("proxy");
     // const baseUrl = await this.discoveryApi.getBaseUrl('snyk');
     return `${baseUrl}${this.proxyPathBase}/snyk`;
   }
 
-  async ListAllAggregatedIssues(orgName: string, projectId: string) { 
-      const backendBaseUrl = await this.getApiUrl();
-      const apiUrl = `${backendBaseUrl}/org/${orgName}/project/${projectId}/aggregated-issues`;
-      const body = {
-        includeDescription: false,
-        filters: {
-          types: ["vuln"],
-          ignored: false
-        }
-      }
-      const response = await fetch(
-        `${apiUrl}`,
-        {
-          method: 'POST',
-          headers: this.headers,
-          body: JSON.stringify(body)
-        }
-      );
-   
-      if (response.status >= 400 && response.status < 600) {
-        throw new Error(`Error ${response.status} - Failed fetching Vuln Issues snyk data`);
-      }
-      const jsonResponse = await response.json()
-      return jsonResponse
-  }
-  async ListAllAggregatedLicenseIssues(orgName: string, projectId: string) { 
-      const backendBaseUrl = await this.getApiUrl();
-      // const apiUrl = `${backendBaseUrl}/${orgName}/${projectId}/license-aggregated-issues`;
-      const apiUrl = `${backendBaseUrl}/org/${orgName}/project/${projectId}/aggregated-issues`;
-      const body = {
-        includeDescription: false,
-        filters: {
-          types: ["license"],
-          ignored: false
-        }
-      }
-      const response = await fetch(
-        `${apiUrl}`,
-        {
-          method: 'POST',
-          headers: this.headers,
-          body: JSON.stringify(body)
-        }
-      );
-   
-      if (response.status >= 400 && response.status < 600) {
-        throw new Error(`Error ${response.status} - Failed fetching License Issues snyk data`);
-      }
-      const jsonResponse = await response.json()
-      return jsonResponse
-  }
-  async ListAllIgnoredIssues(orgName: string, projectId: string) { 
-      const backendBaseUrl = await this.getApiUrl();
-      const apiUrl = `${backendBaseUrl}/org/${orgName}/project/${projectId}/aggregated-issues`;
-      const body = {
-        includeDescription: false,
-        filters: {
-          ignored: true
-        }
-      }
-      const response = await fetch(
-        `${apiUrl}`,
-        {
-          method: 'POST',
-          headers: this.headers,
-          body: JSON.stringify(body)
-        }
-      );
-   
-      if (response.status >= 400 && response.status < 600) {
-        
-        throw new Error(`Error ${response.status} - Failed fetching Ignored Issues snyk data`);
-      }
-      const jsonResponse = await response.json()
-      return jsonResponse
-  }
-  async ProjectDetails(orgName: string, projectId: string) { 
-      const backendBaseUrl = await this.getApiUrl();
-      const apiUrl = `${backendBaseUrl}/org/${orgName}/project/${projectId}`;
-      const response = await fetch(
-        `${apiUrl}`,
-        { 
-          headers: this.headers
-        }
-      );
-   
-      if (response.status >= 400 && response.status < 600) {
-        throw new Error(`Error ${response.status} - Failed fetching ProjectDetails snyk data`);
-      }
-      const jsonResponse = await response.json()
-      return jsonResponse
-  }
-  
-  async ProjectList(orgName: string) { 
-      const backendBaseUrl = await this.getApiUrl();
-      const apiUrl = `${backendBaseUrl}/org/${orgName}/projects`;
-      const body = {filters: {}}
-      const response = await fetch(
-        `${apiUrl}`,
-        {
-          method: 'POST',
-          headers: this.headers,
-          body: JSON.stringify(body)
-        }
-      );
-   
-      if (response.status >= 400 && response.status < 600) {
-        throw new Error(`Error ${response.status} - Failed fetching Projects list snyk data`);
-      }
-      const jsonResponse = await response.json()
-      return jsonResponse
+  async ListAllAggregatedIssues(orgName: string, projectId: string) {
+    const backendBaseUrl = await this.getApiUrl();
+    const apiUrl = `${backendBaseUrl}/org/${orgName}/project/${projectId}/aggregated-issues`;
+    const body = {
+      includeDescription: false,
+      filters: {
+        types: ["vuln"],
+        ignored: false,
+      },
+    };
+    const response = await fetch(`${apiUrl}`, {
+      method: "POST",
+      headers: this.headers,
+      body: JSON.stringify(body),
+    });
 
+    if (response.status >= 400 && response.status < 600) {
+      throw new Error(
+        `Error ${response.status} - Failed fetching Vuln Issues snyk data`
+      );
+    }
+    const jsonResponse = await response.json();
+    return jsonResponse;
+  }
+  async ListAllAggregatedLicenseIssues(orgName: string, projectId: string) {
+    const backendBaseUrl = await this.getApiUrl();
+    const apiUrl = `${backendBaseUrl}/org/${orgName}/project/${projectId}/aggregated-issues`;
+    const body = {
+      includeDescription: false,
+      filters: {
+        types: ["license"],
+        ignored: false,
+      },
+    };
+    const response = await fetch(`${apiUrl}`, {
+      method: "POST",
+      headers: this.headers,
+      body: JSON.stringify(body),
+    });
+
+    if (response.status >= 400 && response.status < 600) {
+      throw new Error(
+        `Error ${response.status} - Failed fetching License Issues snyk data`
+      );
+    }
+    const jsonResponse = await response.json();
+    return jsonResponse;
+  }
+  async ListAllIgnoredIssues(orgName: string, projectId: string) {
+    const backendBaseUrl = await this.getApiUrl();
+    const apiUrl = `${backendBaseUrl}/org/${orgName}/project/${projectId}/aggregated-issues`;
+    const body = {
+      includeDescription: false,
+      filters: {
+        ignored: true,
+      },
+    };
+    const response = await fetch(`${apiUrl}`, {
+      method: "POST",
+      headers: this.headers,
+      body: JSON.stringify(body),
+    });
+
+    if (response.status >= 400 && response.status < 600) {
+      throw new Error(
+        `Error ${response.status} - Failed fetching Ignored Issues snyk data`
+      );
+    }
+    const jsonResponse = await response.json();
+    return jsonResponse;
+  }
+  async ProjectDetails(orgName: string, projectId: string) {
+    const backendBaseUrl = await this.getApiUrl();
+    const apiUrl = `${backendBaseUrl}/org/${orgName}/project/${projectId}`;
+    const response = await fetch(`${apiUrl}`, {
+      headers: this.headers,
+    });
+
+    if (response.status >= 400 && response.status < 600) {
+      throw new Error(
+        `Error ${response.status} - Failed fetching ProjectDetails snyk data`
+      );
+    }
+    const jsonResponse = await response.json();
+    return jsonResponse;
   }
 
-  async GetDependencyGraph(orgName: string, projectId: string) { 
-      const backendBaseUrl = await this.getApiUrl();
-      const apiUrl = `${backendBaseUrl}/org/${orgName}/project/${projectId}/dep-graph`;
-      const response = await fetch(
-        `${apiUrl}`,
-        {
-          headers: this.headers
-        }
+  async ProjectList(orgName: string) {
+    const backendBaseUrl = await this.getApiUrl();
+    const apiUrl = `${backendBaseUrl}/org/${orgName}/projects`;
+    const body = { filters: {} };
+    const response = await fetch(`${apiUrl}`, {
+      method: "POST",
+      headers: this.headers,
+      body: JSON.stringify(body),
+    });
+
+    if (response.status >= 400 && response.status < 600) {
+      throw new Error(
+        `Error ${response.status} - Failed fetching Projects list snyk data`
       );
-   
-      if (response.status >= 400 && response.status < 600) {
-        throw new Error(`Error ${response.status} - Failed fetching DepGraph snyk data`);
-      }
-      const jsonResponse = await response.json()
-      return jsonResponse
+    }
+    const jsonResponse = await response.json();
+    return jsonResponse;
+  }
+
+  async GetDependencyGraph(orgName: string, projectId: string) {
+    const backendBaseUrl = await this.getApiUrl();
+    const apiUrl = `${backendBaseUrl}/org/${orgName}/project/${projectId}/dep-graph`;
+    const response = await fetch(`${apiUrl}`, {
+      headers: this.headers,
+    });
+
+    if (response.status >= 400 && response.status < 600) {
+      throw new Error(
+        `Error ${response.status} - Failed fetching DepGraph snyk data`
+      );
+    }
+    const jsonResponse = await response.json();
+    return jsonResponse;
   }
 }
