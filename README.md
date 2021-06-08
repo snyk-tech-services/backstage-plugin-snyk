@@ -16,9 +16,8 @@ yarn add backstage-plugin-snyk
 
 2. Add plugin to the app
 ```
-// packages/app/src/plugins.ts
-
-export { plugin as SnykPlugin } from 'backstage-plugin-snyk';
+// packages/app/src/App.tsx
+import { EntitySnykContent } from 'backstage-plugin-snyk';
 
 ```
 
@@ -30,7 +29,15 @@ The plugin is composed of 2 main parts
 a. Import the elements
 ```
 // packages/app/src/components/catalog/EntityPage.tsx
-import { Router as SnykRouter, SnykOverviewComponent } from 'backstage-plugin-snyk';
+import { SnykOverview, EntitySnykContent } from 'backstage-plugin-snyk';
+
+....
+
+<FlatRoutes>
+...
+<Route path="/snyk" element={<EntitySnykContent />}/>
+...
+</FlatRoutes>
 
 ```
 
@@ -40,29 +47,27 @@ b. Add the overview card\
 
 ```
 // packages/app/src/components/catalog/EntityPage.tsx
-const OverviewContent = ({ entity }: { entity: Entity }) => (
+const overviewContent = (
   <Grid container spacing={3} alignItems="stretch">
     ...
     <Grid item>        
-      <SnykOverviewComponent entity={entity} />
+      <SnykOverview />
     </Grid>
     ...
   </Grid>
 );
 ```
 
-c. Add the tab (feel free to rename title to Security, snyk, vulns)
+c. Add the tab (feel free to rename title to Security, snyk, vulns, whatever you think is best)
 ```
-const ServiceEntityPage = ({ entity }: { entity: Entity }) => (
-  <EntityPageLayout>
+const ServiceEntityPage = (
+  <EntityLayoutWrapper>
    ...
-    <EntityPageLayout.Content
-      path="/snyk"
-      title="Snyk"
-      element={<SnykRouter entity={entity} />}
-    />
+    <EntityLayout.Route path="/snyk" title="Security">
+      <EntitySnykContent />
+    </EntityLayout.Route>
    ...
-  </EntityPageLayout>
+  </EntityLayoutWrapper>
 );
 ```
 
