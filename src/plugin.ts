@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Spotify AB
+ * Copyright 2021 Spotify AB
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { createPlugin, createRouteRef, createApiFactory,discoveryApiRef } from '@backstage/core';
-import { SnykApiClient, snykApiRef } from './api';
-import { SnykEntityComponent } from './components/SnykEntityComponent';
+import {
+  createPlugin,
+  createApiFactory,
+  discoveryApiRef,
+  createRoutableExtension,
+  createComponentExtension,
+} from "@backstage/core";
+import { SnykApiClient, snykApiRef } from "./api";
+import { entityContentRouteRef } from "./routes";
 
-export const rootRouteRef = createRouteRef({
-  path: '/snyk',
-  title: 'snyk',
-});
-
-export const plugin = createPlugin({
-  id: 'backstage-plugin-snyk',
+export const backstagePluginSnykPlugin: any = createPlugin({
+  id: "backstage-plugin-snyk",
   apis: [
     createApiFactory({
       api: snykApiRef,
@@ -31,7 +32,26 @@ export const plugin = createPlugin({
       factory: ({ discoveryApi }) => new SnykApiClient({ discoveryApi }),
     }),
   ],
-  register({ router }) {
-    router.addRoute(rootRouteRef, SnykEntityComponent);
+  routes: {
+    entityContent: entityContentRouteRef,
   },
 });
+
+export const EntitySnykContent = backstagePluginSnykPlugin.provide(
+  createRoutableExtension({
+    component: () =>
+      import("./components/SnykEntityComponent").then(
+        (m) => m.SnykEntityComponent
+      ),
+    mountPoint: entityContentRouteRef,
+  })
+);
+
+export const SnykOverview = backstagePluginSnykPlugin.provide(
+  createComponentExtension({
+    component: {
+      lazy: () =>
+        import("./components/SnykEntityComponent").then((m) => m.SnykOverview),
+    },
+  })
+);
