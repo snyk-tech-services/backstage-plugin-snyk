@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Table, TableColumn } from "@backstage/core";
+import { Table, TableColumn } from "@backstage/core-components";
 import { Issue } from "../../../types/types";
 
 type DenseTableProps = {

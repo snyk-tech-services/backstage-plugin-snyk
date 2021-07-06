@@ -4,7 +4,7 @@ import { SnykCircularDepCounter } from "./SnykCircularDepCountersComponent";
 import { DepgraphGetResponseType } from "../../../types/types";
 import { depCount } from "../../../types/types";
 import { Grid } from "@material-ui/core";
-import { InfoCard } from "@backstage/core";
+import { InfoCard } from "@backstage/core-components";
 
 type DepGraphProps = {
   depGraph: DepgraphGetResponseType;

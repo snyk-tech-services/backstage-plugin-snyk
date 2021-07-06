@@ -2,12 +2,12 @@ import React, { FC } from "react";
 import {
   Tabs,
   Progress,
-  useApi,
   Content,
   ContentHeader,
   SupportButton,
   WarningPanel,
-} from "@backstage/core";
+} from "@backstage/core-components";
+import { useApi } from "@backstage/core-plugin-api";
 import { snykApiRef } from "../../api";
 import { useAsync } from "react-use";
 import { Alert } from "@material-ui/lab";

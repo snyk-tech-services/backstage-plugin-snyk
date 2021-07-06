@@ -19,7 +19,7 @@ import {
   discoveryApiRef,
   createRoutableExtension,
   createComponentExtension,
-} from "@backstage/core";
+} from "@backstage/core-plugin-api";
 import { SnykApiClient, snykApiRef } from "./api";
 import { entityContentRouteRef } from "./routes";
 
