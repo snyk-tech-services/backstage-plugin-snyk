@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ApiRef, createApiRef, DiscoveryApi } from "@backstage/core";
+import { ApiRef, createApiRef, DiscoveryApi } from "@backstage/core-plugin-api";
 
 const DEFAULT_PROXY_PATH_BASE = "";
 
