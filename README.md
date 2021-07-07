@@ -19,6 +19,14 @@ yarn add backstage-plugin-snyk
 // packages/app/src/App.tsx
 import { EntitySnykContent } from 'backstage-plugin-snyk';
 
+....
+
+<FlatRoutes>
+...
+<Route path="/snyk" element={<EntitySnykContent />}/>
+...
+</FlatRoutes>
+
 ```
 
 3. Add Snyk card and tab to the entity page
@@ -30,15 +38,6 @@ a. Import the elements
 ```
 // packages/app/src/components/catalog/EntityPage.tsx
 import { SnykOverview, EntitySnykContent } from 'backstage-plugin-snyk';
-
-....
-
-<FlatRoutes>
-...
-<Route path="/snyk" element={<EntitySnykContent />}/>
-...
-</FlatRoutes>
-
 ```
 
 b. Add the overview card\
