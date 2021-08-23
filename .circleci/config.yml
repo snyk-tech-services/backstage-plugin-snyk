@@ -21,6 +21,7 @@ jobs:
               yarn tsc
         - snyk/scan:
             fail-on-issues: true
+            severity-threshold: high
             monitor-on-build: true
             token-variable: SNYK_TOKEN
         - run: yarn run semantic-release
@@ -42,6 +43,7 @@ jobs:
               yarn tsc
         - snyk/scan:
             fail-on-issues: true
+            severity-threshold: high
             monitor-on-build: false
             token-variable: SNYK_TOKEN
 
