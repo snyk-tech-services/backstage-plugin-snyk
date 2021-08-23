@@ -970,7 +970,7 @@
     "@babel/helper-validator-identifier" "^7.14.9"
     to-fast-properties "^2.0.0"
 
-"@backstage/catalog-client@^0.3.16", "@backstage/catalog-client@^0.3.18":
+"@backstage/catalog-client@^0.3.18":
   version "0.3.18"
   resolved "https://registry.yarnpkg.com/@backstage/catalog-client/-/catalog-client-0.3.18.tgz#cfabb1e414126554cfe2e593429395e313d58a13"
   integrity sha512-o0Cq2H646YXjHLWyvRKHGZ0l1AqK2xri4BpGqwpw25QAYNacHIrIv3dKhl+ahbrTJ21r7oeBtb9mflMySpD4KA==
@@ -1135,7 +1135,7 @@
   dependencies:
     lodash "^4.17.15"
 
-"@backstage/core-app-api@^0.1.4", "@backstage/core-app-api@^0.1.8", "@backstage/core-app-api@^0.1.9":
+"@backstage/core-app-api@^0.1.8", "@backstage/core-app-api@^0.1.9":
   version "0.1.9"
   resolved "https://registry.yarnpkg.com/@backstage/core-app-api/-/core-app-api-0.1.9.tgz#ffdeb9b88768b4d6d82fee8a6160ce18d7612e51"
   integrity sha512-NBSBLODryTFHrpiKj0PnwE/SYAKaaQ6upY1a+6L8/CTTQkAilzl4aI2cWCtxMc1SklgCQE+Xw7nA0VRs7naKSQ==
@@ -1154,7 +1154,7 @@
     react-use "^17.2.4"
     zen-observable "^0.8.15"
 
-"@backstage/core-components@^0.1.4", "@backstage/core-components@^0.1.5":
+"@backstage/core-components@^0.1.4":
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/@backstage/core-components/-/core-components-0.1.6.tgz#a66d9af3be61e76ed60d1026dec376b2d97e0a8e"
   integrity sha512-SdBORocyrMa38B2Y3F4Ju45UUm42hLSums+CV4LlHVHKuINGbZg7JZ/WI7tDGks27MXgtU7mLlMlV7tJMeJgKA==
@@ -1311,18 +1311,6 @@
     react-dom "^16.13.1"
     react-use "^17.2.4"
 
-"@backstage/integration@^0.5.8":
-  version "0.5.9"
-  resolved "https://registry.yarnpkg.com/@backstage/integration/-/integration-0.5.9.tgz#9eeb2f570794b196a8e769d8628b68937863a0fc"
-  integrity sha512-SfYcIHMurasJ5AlNzvq/4+8VLx5ONZ1vZqSG9zX/jvASCyrQY+Ifumaj13XBBuykTv61eHaqsLcEFtd0zgBtpQ==
-  dependencies:
-    "@backstage/config" "^0.1.6"
-    "@octokit/auth-app" "^3.4.0"
-    "@octokit/rest" "^18.5.3"
-    cross-fetch "^3.0.6"
-    git-url-parse "~11.4.4"
-    luxon "^1.25.0"
-
 "@backstage/integration@^0.6.0", "@backstage/integration@^0.6.1":
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/@backstage/integration/-/integration-0.6.1.tgz#ec38871a842689680ca251e750f9e7bbccbd67d2"
@@ -1335,28 +1323,7 @@
     git-url-parse "~11.4.4"
     luxon "^2.0.2"
 
-"@backstage/plugin-catalog-react@^0.2.5":
-  version "0.2.6"
-  resolved "https://registry.yarnpkg.com/@backstage/plugin-catalog-react/-/plugin-catalog-react-0.2.6.tgz#4e3a0ea9394f163c95df97b72511f2bd2277f40a"
-  integrity sha512-loSYkm6aZKFn5gJ0xy9A3Ii3czSgA5ZRhCchqcN3ViSsipJLUbQt2TtMc8Tyk2h0e8AyRhyteEkcrnPGQqGXlQ==
-  dependencies:
-    "@backstage/catalog-client" "^0.3.16"
-    "@backstage/catalog-model" "^0.9.0"
-    "@backstage/core-app-api" "^0.1.4"
-    "@backstage/core-components" "^0.1.5"
-    "@backstage/core-plugin-api" "^0.1.3"
-    "@backstage/integration" "^0.5.8"
-    "@material-ui/core" "^4.11.0"
-    "@material-ui/icons" "^4.9.1"
-    "@material-ui/lab" "4.0.0-alpha.45"
-    "@types/react" "^16.9"
-    lodash "^4.17.15"
-    react "^16.13.1"
-    react-router "6.0.0-beta.0"
-    react-router-dom "6.0.0-beta.0"
-    react-use "^17.2.4"
-
-"@backstage/plugin-catalog-react@^0.4.3":
+"@backstage/plugin-catalog-react@^0.4.0", "@backstage/plugin-catalog-react@^0.4.3":
   version "0.4.3"
   resolved "https://registry.yarnpkg.com/@backstage/plugin-catalog-react/-/plugin-catalog-react-0.4.3.tgz#448df6ec123a0881c18e0a7fa98e203436ddfb3c"
   integrity sha512-6PSQ+YbJxaDlYP5kpQG53ZN2CtIEUGxWtve+4JNI1timh7s4uO25ZrWqqg85xE5kBqEpAJZxmpIhdjhv9Knc9w==
@@ -8351,11 +8318,6 @@ lru-cache@^6.0.0:
   integrity sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==
   dependencies:
     yallist "^4.0.0"
-
-luxon@^1.25.0:
-  version "1.28.0"
-  resolved "https://registry.yarnpkg.com/luxon/-/luxon-1.28.0.tgz#e7f96daad3938c06a62de0fb027115d251251fbf"
-  integrity sha512-TfTiyvZhwBYM/7QdAVDh+7dBTBA29v4ik0Ce9zda3Mnf8on1S5KJI8P2jKFZ8+5C0jhmr0KwJEO/Wdpm0VeWJQ==
 
 luxon@^2.0.2:
   version "2.0.2"
