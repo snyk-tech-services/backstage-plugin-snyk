@@ -6,7 +6,7 @@ import {
   Content,
   TabbedCard,
   CardTab,
-} from "@backstage/core";
+} from "@backstage/core-components";
 import { Grid } from "@material-ui/core";
 import { SnykApi } from "../../api/index";
 import { useAsync } from "react-use";
