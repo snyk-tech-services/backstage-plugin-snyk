@@ -10,15 +10,17 @@ jobs:
 
       steps:
         - checkout
-        - run: yarn add semantic-release @semantic-release/exec --dev
         - run:
             name: "Install deps"
             command: |
               yarn install
+        - run: yarn add semantic-release --dev
         - run:
             name: "Build"
             command: |
               yarn tsc
+        - run: yarn add ms
+        - run: yarn remove ms
         - snyk/scan:
             fail-on-issues: true
             severity-threshold: high
