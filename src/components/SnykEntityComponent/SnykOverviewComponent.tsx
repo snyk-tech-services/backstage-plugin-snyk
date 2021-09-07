@@ -61,9 +61,6 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
   const snykApi = useApi(snykApiRef);
   const orgName = entity?.metadata.annotations?.["snyk.io/org-name"] || "null";
 
-  const counterContentStyle = { height: "50%" };
-
-
   const { value, loading, error } = useAsync(async () => {
     let aggregatedIssuesCount: issuesCount = {
       critical: 0,
@@ -120,7 +117,6 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
     return (
       <Content>
         <InfoCard
-          style={counterContentStyle}
           title="Issues"
           deepLink={{ title: "Retrieving Vulnerabilities from Snyk", link: "" }}
         >
@@ -133,7 +129,6 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
     return (
       <Content>
         <InfoCard
-          style={counterContentStyle}
           title="Vulnerabilities"
           deepLink={{ title: "Error", link: "" }}
         >
@@ -152,7 +147,6 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
 
   return (
     <InfoCard
-      style={counterContentStyle}
       title="Vulnerabilities"
       deepLink={linkInfo}
     >
