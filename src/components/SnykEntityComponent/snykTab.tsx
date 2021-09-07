@@ -89,7 +89,6 @@ export const generateSnykTabForProject = (
       title: "More details",
       link: `https://app.snyk.io/org/${orgName}/project/${projectId}`,
     };
-    const counterContentStyle = { height: "50%" };
 
     return (
       <Wrapper>
@@ -102,7 +101,7 @@ export const generateSnykTabForProject = (
         </Grid>
         <Grid container spacing={2} justify="space-between" direction="row">
           <Grid item xs={3}>
-            <InfoCard style={counterContentStyle} title="Vulnerabilities">
+            <InfoCard title="Vulnerabilities">
               <SnykCircularCounter issuesCount={issuesCount} />
             </InfoCard>
           </Grid>
