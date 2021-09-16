@@ -20,7 +20,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "4.0.0-alpha.45",
     "@mdi/js": "^5.6.55",
-    "@snyk/dep-graph": "^1.23.1",
+    "@snyk/dep-graph": "^1.29.0",
     "react-circular-progressbar": "^2.0.3",
     "react-use": "^17.2.4"
   },
