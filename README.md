@@ -135,3 +135,7 @@ spec:
     pathRewrite:
       '^/proxy/snyk/': '/'
 ```
+
+## Limitations
+
+Infrastructure as Code and Snyk Code projects are not supported currently.
