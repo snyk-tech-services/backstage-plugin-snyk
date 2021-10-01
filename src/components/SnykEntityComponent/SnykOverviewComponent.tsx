@@ -142,7 +142,7 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
 
   const linkInfo = {
     title: `Across ${projectsCount} project${projectsCount > 0 ? "s" : ""}`,
-    link: `snyk`,
+    link: `snyk/`,
   };
 
   return (
