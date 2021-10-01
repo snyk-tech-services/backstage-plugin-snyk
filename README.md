@@ -70,7 +70,7 @@ const ServiceEntityPage = (
 );
 ```
 
-4. Add snyk proxy config to app-config.yaml file at the root directory. If using Snyk self hosted, adjust target to https://<YOURHOSTNAME>/api. User Agent helps us see how much API traffic comes from backstage setups so we can invest more in the plugin !
+4. Add snyk proxy config to app-config.yaml file at the root directory. If using Snyk self hosted, adjust target to https://YOURHOSTNAME/api. User Agent helps us see how much API traffic comes from backstage setups so we can invest more in the plugin !
 ```
 proxy:
   ...
@@ -135,3 +135,7 @@ spec:
     pathRewrite:
       '^/proxy/snyk/': '/'
 ```
+
+## Limitations
+
+Infrastructure as Code and Snyk Code projects are not supported currently.
