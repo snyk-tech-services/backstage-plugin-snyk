@@ -1184,6 +1184,7 @@
   version "0.1.9"
   resolved "https://registry.yarnpkg.com/@backstage/core-plugin-api/-/core-plugin-api-0.1.9.tgz#c5e69f4aea1a08eaa58236466de1aa6693284413"
   integrity sha512-mE727Jw3+h4FeLBiqAws39nhSNPaME6rGNMhg+Ee6NaMAF1Jj9MxajaVXFbQQmAfUzz2tbDzaLeR0bcaVV7LiA==
+
   dependencies:
     "@backstage/config" "^0.1.9"
     "@backstage/theme" "^0.2.9"
@@ -10104,6 +10105,11 @@ react-hook-form@^7.12.2:
   version "7.17.1"
   resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.17.1.tgz#dc257a5e34b3c353460ecdbbba5236e066cf80b1"
   integrity sha512-9nQ+qKFHFpnWzQHdDh6F4Egxa8iJkue1KU921F8qqeyUVbPPjgQZDXaQyNHABEYjRh0ndjTI24GDA+lwm2lQdg==
+
+react-hook-form@^7.12.2:
+  version "7.16.2"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.16.2.tgz#d1faca72ceab609e4079574988a0480ef67ae1ed"
+  integrity sha512-99BOspznkVoYppJJSMRsQv9jIw65P0T5g3JhegeosRAeNut/VEEViuBPViDb+mU4sP+uaAcPqqSa7dxZOOgknw==
 
 react-hot-loader@^4.12.21:
   version "4.13.0"
