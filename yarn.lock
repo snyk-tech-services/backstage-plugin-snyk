@@ -1117,6 +1117,14 @@
   dependencies:
     lodash "^4.17.21"
 
+"@backstage/config@^0.1.11":
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/@backstage/config/-/config-0.1.11.tgz#efaace61f02f11e6d0342efc9ef6d72da818ba80"
+  integrity sha512-8Zle4YcIr+vwVTS5pk9+SKOre3OQKTWPufpO9OZ86riFVuB9mKN4lCX9zyarlt2FOd50R25Oc/M7fWcwOQzSPA==
+  dependencies:
+    "@backstage/types" "^0.1.1"
+    lodash "^4.17.21"
+
 "@backstage/core-app-api@^0.1.15", "@backstage/core-app-api@^0.1.8":
   version "0.1.15"
   resolved "https://registry.yarnpkg.com/@backstage/core-app-api/-/core-app-api-0.1.15.tgz#981bdf9473cd23ce7b91177e26c5ffc84f8f773d"
@@ -1180,11 +1188,71 @@
     remark-gfm "^1.0.0"
     zen-observable "^0.8.15"
 
+"@backstage/core-components@^0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@backstage/core-components/-/core-components-0.6.1.tgz#65cfc704828f76c48ad5115404779206bb6fe1bb"
+  integrity sha512-gQRRcYEv98BFLpVW5nu2MhuzgjoMVEhPMyUSRc9NYa58GA1D8Q7zV7xYdbfCanMOlKDmi+rQ3Cp2u6C60+uhNg==
+  dependencies:
+    "@backstage/config" "^0.1.10"
+    "@backstage/core-plugin-api" "^0.1.10"
+    "@backstage/errors" "^0.1.2"
+    "@backstage/theme" "^0.2.10"
+    "@material-table/core" "^3.1.0"
+    "@material-ui/core" "^4.12.2"
+    "@material-ui/icons" "^4.9.1"
+    "@material-ui/lab" "4.0.0-alpha.57"
+    "@types/dagre" "^0.7.44"
+    "@types/react" "*"
+    "@types/react-sparklines" "^1.7.0"
+    "@types/react-text-truncate" "^0.14.0"
+    classnames "^2.2.6"
+    clsx "^1.1.0"
+    d3-selection "^2.0.0"
+    d3-shape "^2.0.0"
+    d3-zoom "^2.0.0"
+    dagre "^0.8.5"
+    immer "^9.0.1"
+    lodash "^4.17.21"
+    pluralize "^8.0.0"
+    prop-types "^15.7.2"
+    qs "^6.9.4"
+    rc-progress "^3.0.0"
+    react "^16.12.0"
+    react-dom "^16.12.0"
+    react-helmet "6.1.0"
+    react-hook-form "^7.12.2"
+    react-markdown "^5.0.2"
+    react-router "6.0.0-beta.0"
+    react-router-dom "6.0.0-beta.0"
+    react-sparklines "^1.7.0"
+    react-syntax-highlighter "^15.4.3"
+    react-text-truncate "^0.16.0"
+    react-use "^17.2.4"
+    remark-gfm "^1.0.0"
+    zen-observable "^0.8.15"
+
+"@backstage/core-plugin-api@^0.1.10":
+  version "0.1.12"
+  resolved "https://registry.yarnpkg.com/@backstage/core-plugin-api/-/core-plugin-api-0.1.12.tgz#aaf5e5cbb79373ba9c6389752683313fb44eb9ea"
+  integrity sha512-eufEuG934zM8HWTi7S9pG7XG+5MWnA9g4wRrFI06YCAxn1Wx9wYYL1dgSnqshsb1AEaL+dTyY50yzamnXwGr2g==
+  dependencies:
+    "@backstage/config" "^0.1.11"
+    "@backstage/theme" "^0.2.12"
+    "@backstage/types" "^0.1.1"
+    "@backstage/version-bridge" "^0.1.0"
+    "@material-ui/core" "^4.12.2"
+    "@types/react" "*"
+    history "^5.0.0"
+    prop-types "^15.7.2"
+    react "^16.12.0"
+    react-router-dom "6.0.0-beta.0"
+    react-use "^17.2.4"
+    zen-observable "^0.8.15"
+
 "@backstage/core-plugin-api@^0.1.6", "@backstage/core-plugin-api@^0.1.9":
   version "0.1.9"
   resolved "https://registry.yarnpkg.com/@backstage/core-plugin-api/-/core-plugin-api-0.1.9.tgz#c5e69f4aea1a08eaa58236466de1aa6693284413"
   integrity sha512-mE727Jw3+h4FeLBiqAws39nhSNPaME6rGNMhg+Ee6NaMAF1Jj9MxajaVXFbQQmAfUzz2tbDzaLeR0bcaVV7LiA==
-
   dependencies:
     "@backstage/config" "^0.1.9"
     "@backstage/theme" "^0.2.9"
@@ -1322,6 +1390,18 @@
   integrity sha512-YPfjpgtZp1I6jMZ2V0JG/9UzbdF5zqzNoJytHtldB4MqtrQUm7UPZyrNbintLW96LOVqwfMnzjGXztT5tO46Tg==
   dependencies:
     "@material-ui/core" "^4.12.2"
+
+"@backstage/theme@^0.2.12":
+  version "0.2.12"
+  resolved "https://registry.yarnpkg.com/@backstage/theme/-/theme-0.2.12.tgz#a11c07dac1ffb1bbdd7758752d3e996120cc19e9"
+  integrity sha512-1S81lNzNC+30qogWSMEasR6cYzozwW4U6Zi02nWfS8KcMT+o8kqY7MNlCibo+lLsKXs7gZwTNYUxq7lAkkNSAA==
+  dependencies:
+    "@material-ui/core" "^4.12.2"
+
+"@backstage/types@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@backstage/types/-/types-0.1.1.tgz#9d3091daef5cba7329d7ee98b82ea27430234201"
+  integrity sha512-ju+T86ogNPnwjjXjSaa4FIb6H/+J0DLWvxfdmqYOrLuuuJvZ5v3wwg7c2SHWfQhokjj8fqA1oERliCIiqcNHIg==
 
 "@backstage/version-bridge@^0.1.0":
   version "0.1.0"
@@ -10100,11 +10180,6 @@ react-helmet@6.1.0:
     prop-types "^15.7.2"
     react-fast-compare "^3.1.1"
     react-side-effect "^2.1.0"
-
-react-hook-form@^7.12.2:
-  version "7.17.1"
-  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.17.1.tgz#dc257a5e34b3c353460ecdbbba5236e066cf80b1"
-  integrity sha512-9nQ+qKFHFpnWzQHdDh6F4Egxa8iJkue1KU921F8qqeyUVbPPjgQZDXaQyNHABEYjRh0ndjTI24GDA+lwm2lQdg==
 
 react-hook-form@^7.12.2:
   version "7.16.2"
