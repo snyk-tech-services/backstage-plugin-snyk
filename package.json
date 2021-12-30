@@ -12,7 +12,7 @@
     "build": "yarn tsc"
   },
   "dependencies": {
-    "@backstage/catalog-model": "^0.9.3",
+    "@backstage/catalog-model": "^0.9.7",
     "@backstage/core-components": "^0.6.0",
     "@backstage/core-plugin-api": "^0.1.9",
     "@backstage/plugin-catalog-react": "^0.5.1",
