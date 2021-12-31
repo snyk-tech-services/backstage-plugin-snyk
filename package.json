@@ -9,10 +9,11 @@
     "types": "dist/index.d.ts"
   },
   "scripts": {
-    "build": "yarn tsc"
+    "build": "yarn tsc",
+    "test": "snyk test"
   },
   "dependencies": {
-    "@backstage/catalog-model": "^0.9.3",
+    "@backstage/catalog-model": "0.9.7",
     "@backstage/core-components": "^0.6.0",
     "@backstage/core-plugin-api": "^0.1.9",
     "@backstage/plugin-catalog-react": "^0.5.1",
@@ -33,7 +34,8 @@
     "@types/jest": "^26.0.7",
     "@types/node": "^12.0.0",
     "msw": "^0.30.1",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.1",
+    "snyk": "^1.812.0"
   },
   "files": [
     "dist"
