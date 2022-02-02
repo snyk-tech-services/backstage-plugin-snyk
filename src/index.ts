@@ -18,3 +18,7 @@ export {
   SnykOverview,
   EntitySnykContent,
 } from "./plugin";
+export {
+  isPluginApplicableToEntity,
+  isPluginApplicableToEntity as isSnykAvailable,
+} from './components/SnykEntityComponent';
