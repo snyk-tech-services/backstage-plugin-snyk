@@ -37,7 +37,7 @@ The plugin is composed of 2 main parts
 a. Import the elements
 ```
 // packages/app/src/components/catalog/EntityPage.tsx
-import { SnykOverview, EntitySnykContent } from 'backstage-plugin-snyk';
+import { SnykOverview, EntitySnykContent, isSnykAvailable } from 'backstage-plugin-snyk';
 ```
 
 b. Add the overview card\
@@ -49,9 +49,13 @@ b. Add the overview card\
 const overviewContent = (
   <Grid container spacing={3} alignItems="stretch">
     ...
-    <Grid item>        
-      <SnykOverview />
-    </Grid>
+    <EntitySwitch>
+      <EntitySwitch.Case if={isSnykAvailable}>
+        <Grid item md={6}>
+          <SnykOverview />
+        </Grid>
+      </EntitySwitch.Case>
+    </EntitySwitch>
     ...
   </Grid>
 );
