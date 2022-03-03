@@ -39,6 +39,7 @@ export const backstagePluginSnykPlugin: any = createPlugin({
 
 export const EntitySnykContent = backstagePluginSnykPlugin.provide(
   createRoutableExtension({
+    name: 'snyk',
     component: () =>
       import("./components/SnykEntityComponent").then(
         (m) => m.SnykEntityComponent

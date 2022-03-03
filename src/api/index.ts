@@ -28,7 +28,6 @@ type Options = {
 //@ts-ignore
 export const snykApiRef: ApiRef<SnykApi> = createApiRef<SnykApi>({
   id: "plugin.snyk.service",
-  description: "Used by the Snyk plugin to make requests",
 });
 
 export interface SnykApi {
