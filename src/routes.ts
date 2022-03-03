@@ -16,6 +16,5 @@
 import { createRouteRef } from "@backstage/core-plugin-api";
 
 export const entityContentRouteRef: any = createRouteRef({
-  path: "/snyk",
-  title: "snyk",
+  id: "snyk",
 });
