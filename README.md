@@ -9,13 +9,13 @@ The Snyk plugin displays security details from [snyk.io](https://snyk.io/).
 > **Requirements: Snyk API enabled (Paid plans only)**
 
 1. Install plugin
-```
+```bash
 # packages/app
 yarn add backstage-plugin-snyk
 ```
 
 2. Add plugin to the app
-```
+```typescript
 // packages/app/src/App.tsx
 import { EntitySnykContent } from 'backstage-plugin-snyk';
 
@@ -35,7 +35,7 @@ The plugin is composed of 2 main parts
 - Security tab in the entity displaying further details
 
 a. Import the elements
-```
+```typescript
 // packages/app/src/components/catalog/EntityPage.tsx
 import { SnykOverview, EntitySnykContent, isSnykAvailable } from 'backstage-plugin-snyk';
 ```
@@ -44,7 +44,7 @@ b. Add the overview card\
 \
 ![Overview card](https://storage.googleapis.com/snyk-technical-services.appspot.com/backstage-screenshots/backstage-plugin-overview-card.png)
 
-```
+```typescript
 // packages/app/src/components/catalog/EntityPage.tsx
 const overviewContent = (
   <Grid container spacing={3} alignItems="stretch">
@@ -62,7 +62,7 @@ const overviewContent = (
 ```
 
 c. Add the tab (feel free to rename title to Security, snyk, vulns, whatever you think is best)
-```
+```typescript
 const ServiceEntityPage = (
   <EntityLayoutWrapper>
    ...
@@ -75,7 +75,7 @@ const ServiceEntityPage = (
 ```
 
 4. Add snyk proxy config to app-config.yaml file at the root directory. If using Snyk self hosted, adjust target to https://YOURHOSTNAME/api. User Agent helps us see how much API traffic comes from backstage setups so we can invest more in the plugin !
-```
+```yaml
 proxy:
   ...
 
@@ -89,7 +89,7 @@ proxy:
 ```
 
 5. Get your Snyk token (a service account with Viewer permission at your group level is preferred) and provide SNYK_TOKEN env var with the value "token <YOURTOKEN>"
-```
+```bash
 export SNYK_TOKEN="token 123-123-123-123"
 ```
 
@@ -101,7 +101,7 @@ If multiple projects (like multiple package.json or pom files, add them with inc
 
 
 Example:
-```
+```yaml
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
@@ -129,7 +129,7 @@ spec:
 
 
 - 404s from Snyk API? Add [pathRewrite your app-config.yaml proxy](https://github.com/snyk-tech-services/backstage-plugin-snyk/issues/11) to the following
-```
+```yaml
 '/snyk':
     target: https://snyk.io/api/v1
     headers:
