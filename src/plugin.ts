@@ -50,6 +50,7 @@ export const EntitySnykContent = backstagePluginSnykPlugin.provide(
 
 export const SnykOverview = backstagePluginSnykPlugin.provide(
   createComponentExtension({
+    name: 'SnykOverview',
     component: {
       lazy: () =>
         import("./components/SnykEntityComponent").then((m) => m.SnykOverview),
