@@ -2152,10 +2152,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@snyk/dep-graph@^1.23.1":
-  version "1.30.0"
-  resolved "https://registry.yarnpkg.com/@snyk/dep-graph/-/dep-graph-1.30.0.tgz#49d45aa7947f78a68871cd059efc5b7b323144df"
-  integrity sha512-V5j0wl+pYwIRmCyufomJzmbQQholwef2XpHMvrhveYF5S3IkNzeHm4lsCcEiFYRf8IOD4NWYZ/aDMT+y8pJ93A==
+"@snyk/dep-graph@^1.31.0":
+  version "1.31.0"
+  resolved "https://registry.yarnpkg.com/@snyk/dep-graph/-/dep-graph-1.31.0.tgz#ebe25aac857c389081b35e1a71ead3c74ecfb0a5"
+  integrity sha512-nGSua40dcI/ISDDW46EYSjwVZxdWohb4bDlHFYtudL5bxo0PV9wFA1QeZewKQVeHLVaGkrESXdqQubP0pFf4vA==
   dependencies:
     event-loop-spinner "^2.1.0"
     lodash.clone "^4.5.0"
