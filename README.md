@@ -1,4 +1,8 @@
 # Snyk Backstage Plugin
+[![Not Maintained](https://img.shields.io/badge/Maintenance%20Level-Not%20Maintained-yellow.svg)](https://gist.github.com/cheerfulstoic/d107229326a01ff0f333a1d3476e068d)
+
+**This repository is not in active developemnt and critical bug fixes only will be considered.**
+
 
 The Snyk plugin displays security details from [snyk.io](https://snyk.io/).
 
