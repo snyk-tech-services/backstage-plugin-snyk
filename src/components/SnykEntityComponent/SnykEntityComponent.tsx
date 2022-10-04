@@ -22,7 +22,7 @@ import {
   mdiBitbucket,
   mdiMicrosoftAzureDevops,
   mdiLambda,
-} from "@mdi/js";
+} from "./svgs";
 import { Grid } from "@material-ui/core";
 import { useEntity } from "@backstage/plugin-catalog-react";
 
