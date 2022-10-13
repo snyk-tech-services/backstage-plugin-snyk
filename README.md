@@ -50,8 +50,8 @@ b. Add the overview card\
 
 ```typescript
 // packages/app/src/components/catalog/EntityPage.tsx
-const overviewContent = (
-  <Grid container spacing={3} alignItems="stretch">
+const entityWarningContent = (
+  <>
     ...
     <EntitySwitch>
       <EntitySwitch.Case if={isSnykAvailable}>
@@ -61,7 +61,7 @@ const overviewContent = (
       </EntitySwitch.Case>
     </EntitySwitch>
     ...
-  </Grid>
+  </>
 );
 ```
 
@@ -87,8 +87,7 @@ proxy:
     target: https://snyk.io/api/v1
     headers:
       User-Agent: tech-services/backstage-plugin/1.0
-      Authorization:
-        $env: SNYK_TOKEN
+      Authorization: token ${SNYK_TOKEN}
   ...
 ```
 
@@ -126,8 +125,7 @@ spec:
 
 ## Troubleshooting
 
-- Missing or wrong token set in the backend proxy. Make sure to have the `token` in the export value
-`export SNYK_TOKEN="token <TOKEN>"`\
+- Missing or wrong token set in the backend proxy.\
 
     ![Missing/wrong token](https://storage.googleapis.com/snyk-technical-services.appspot.com/backstage-screenshots/backstage_card_error_wrong_or_missing_token.png)
 
