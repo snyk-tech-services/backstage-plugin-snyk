@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React from "react";
 import {
   StructuredMetadataTable,
   Progress,
@@ -23,13 +23,6 @@ import {
   DepgraphGetResponseType,
 } from "../../types/types";
 
-const Wrapper: FC<{}> = ({ children }) => (
-  <Grid style={{ marginTop: "2px" }} container spacing={2}>
-    <Grid item xs={12}>
-      {children}
-    </Grid>
-  </Grid>
-);
 
 export const generateSnykTabForProject = (
   snykApi: SnykApi,
@@ -91,56 +84,58 @@ export const generateSnykTabForProject = (
     };
 
     return (
-      <Wrapper>
-        <Grid container spacing={2} justify="space-between" direction="row">
-          <Grid item xs={12}>
-            <InfoCard title={value.projectDetails.name}>
-              <StructuredMetadataTable metadata={metadata} />
-            </InfoCard>
+      <Grid style={{ marginTop: "2px" }} container spacing={2}>
+        <Grid item xs={12}>
+          <Grid container spacing={2} justify="space-between" direction="row">
+            <Grid item xs={12}>
+              <InfoCard title={value.projectDetails.name}>
+                <StructuredMetadataTable metadata={metadata} />
+              </InfoCard>
+            </Grid>
           </Grid>
-        </Grid>
-        <Grid container spacing={2} justify="space-between" direction="row">
-          <Grid item xs={3}>
-            <InfoCard title="Vulnerabilities">
-              <SnykCircularCounter issuesCount={issuesCount} />
-            </InfoCard>
+          <Grid container spacing={2} justify="space-between" direction="row">
+            <Grid item xs={3}>
+              <InfoCard title="Vulnerabilities">
+                <SnykCircularCounter issuesCount={issuesCount} />
+              </InfoCard>
+            </Grid>
+            <Grid item xs={3}>
+              <InfoCard title="License Issues">
+                <SnykCircularCounter issuesCount={licenseIssuesCount} />
+              </InfoCard>
+            </Grid>
+            <Grid item xs={3}>
+              <InfoCard title="Ignored Issues">
+                <SnykCircularCounter issuesCount={ignoredIssuesCount} />
+              </InfoCard>
+            </Grid>
           </Grid>
-          <Grid item xs={3}>
-            <InfoCard title="License Issues">
-              <SnykCircularCounter issuesCount={licenseIssuesCount} />
-            </InfoCard>
-          </Grid>
-          <Grid item xs={3}>
-            <InfoCard title="Ignored Issues">
-              <SnykCircularCounter issuesCount={ignoredIssuesCount} />
-            </InfoCard>
-          </Grid>
-        </Grid>
 
-        <Grid container spacing={2} justify="space-between" direction="row">
-          <Grid item xs={12}>
-            <TabbedCard deepLink={linkInfo}>
-              <CardTab label="Issues">
-                <IssuesTable issues={value.vulnsIssues.issues} />
-              </CardTab>
-              <CardTab label="License Issues">
-                <LicenseIssuesTable issues={value.licenseIssues.issues} />
-              </CardTab>
-              <CardTab label="Dependencies">
-                <Grid container>
-                  <DepGraphInfo depGraph={value.depGraph} />
-                </Grid>
-              </CardTab>
-              <CardTab label="Ignored">
-                <IgnoredIssuesTable issues={value.ignoredIssues.issues} />
-              </CardTab>
-              {/* <CardTab label="Trends">
-                    <div style={cardContentStyle}>Some content 4</div>
-                  </CardTab> */}
-            </TabbedCard>
+          <Grid container spacing={2} justify="space-between" direction="row">
+            <Grid item xs={12}>
+              <TabbedCard deepLink={linkInfo}>
+                <CardTab label="Issues">
+                  <IssuesTable issues={value.vulnsIssues.issues} />
+                </CardTab>
+                <CardTab label="License Issues">
+                  <LicenseIssuesTable issues={value.licenseIssues.issues} />
+                </CardTab>
+                <CardTab label="Dependencies">
+                  <Grid container>
+                    <DepGraphInfo depGraph={value.depGraph} />
+                  </Grid>
+                </CardTab>
+                <CardTab label="Ignored">
+                  <IgnoredIssuesTable issues={value.ignoredIssues.issues} />
+                </CardTab>
+                {/* <CardTab label="Trends">
+                      <div style={cardContentStyle}>Some content 4</div>
+                    </CardTab> */}
+              </TabbedCard>
+            </Grid>
           </Grid>
         </Grid>
-      </Wrapper>
+      </Grid>
     );
   };
 };
