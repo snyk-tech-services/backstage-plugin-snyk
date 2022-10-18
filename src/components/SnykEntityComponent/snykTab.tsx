@@ -111,31 +111,31 @@ export const generateSnykTabForProject = (
             </Grid>
           </Grid>
 
-          <Grid container spacing={2} justify="space-between" direction="row">
-            <Grid item xs={12}>
-              <TabbedCard deepLink={linkInfo}>
-                <CardTab label="Issues">
-                  <IssuesTable issues={value.vulnsIssues.issues} />
-                </CardTab>
-                <CardTab label="License Issues">
-                  <LicenseIssuesTable issues={value.licenseIssues.issues} />
-                </CardTab>
-                <CardTab label="Dependencies">
-                  <Grid container>
-                    <DepGraphInfo depGraph={value.depGraph} />
-                  </Grid>
-                </CardTab>
-                <CardTab label="Ignored">
-                  <IgnoredIssuesTable issues={value.ignoredIssues.issues} />
-                </CardTab>
-                {/* <CardTab label="Trends">
-                      <div style={cardContentStyle}>Some content 4</div>
-                    </CardTab> */}
-              </TabbedCard>
-            </Grid>
+        <Grid container spacing={2} justify="space-between" direction="row">
+          <Grid item xs={12}>
+            <TabbedCard deepLink={linkInfo}>
+              <CardTab label="Issues">
+                <IssuesTable issues={value.vulnsIssues.issues} pageUrl={linkInfo.link} />
+              </CardTab>
+              <CardTab label="License Issues">
+                <LicenseIssuesTable issues={value.licenseIssues.issues} pageUrl={linkInfo.link} />
+              </CardTab>
+              <CardTab label="Dependencies">
+                <Grid container>
+                  <DepGraphInfo depGraph={value.depGraph} />
+                </Grid>
+              </CardTab>
+              <CardTab label="Ignored">
+                <IgnoredIssuesTable issues={value.ignoredIssues.issues} />
+              </CardTab>
+              {/* <CardTab label="Trends">
+                    <div style={cardContentStyle}>Some content 4</div>
+                  </CardTab> */}
+            </TabbedCard>
           </Grid>
         </Grid>
       </Grid>
+    </Grid>
     );
   };
 };

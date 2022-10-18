@@ -1,12 +1,13 @@
 import React, { FC } from "react";
-import { Table, TableColumn } from "@backstage/core-components";
+import { Table, TableColumn, Link } from "@backstage/core-components";
 import { Issue } from "../../../types/types";
 
 type DenseTableProps = {
   issues: Array<Issue>;
+  pageUrl: string;
 };
 
-export const IssuesTable: FC<DenseTableProps> = ({ issues }) => {
+export const IssuesTable: FC<DenseTableProps> = ({ issues, pageUrl }) => {
   const columns: TableColumn[] = [
     { title: "Severity", field: "severity" },
     { title: "ID", field: "id" },
@@ -17,9 +18,10 @@ export const IssuesTable: FC<DenseTableProps> = ({ issues }) => {
   ];
 
   const data = issues.map((issue) => {
+    const deepLinkToIssue = <Link to={`${pageUrl}#issue-${issue.id}`}>{issue.id}</Link>
     return {
       severity: issue.issueData.severity,
-      id: issue.id,
+      id: deepLinkToIssue,
       name: issue.pkgName,
       versions: issue.pkgVersions,
       description: issue.issueData.title,
