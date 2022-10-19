@@ -5,9 +5,9 @@ import {
   Content,
   ContentHeader,
   SupportButton,
-  WarningPanel,
 } from "@backstage/core-components";
 import { useApi } from "@backstage/core-plugin-api";
+import { MissingAnnotationEmptyState } from '@backstage/core-components';
 import { snykApiRef } from "../../api";
 import { useAsync } from "react-use";
 import { Alert } from "@material-ui/lab";
@@ -23,7 +23,6 @@ import {
   mdiMicrosoftAzureDevops,
   mdiLambda,
 } from "./svgs";
-import { Grid } from "@material-ui/core";
 import { useEntity } from "@backstage/plugin-catalog-react";
 
 type SnykTab = {
@@ -75,6 +74,10 @@ const getIconForProjectType = (projectOrigin: string) => {
       return <> </>;
   }
 };
+
+const SNYK_ANNOTATION_ORG = 'snyk.io/org-name';
+const SNYK_ANNOTATION_PROJECTIDS = 'snyk.io/project-ids';
+
 export const SnykEntityComponent = () => {
   const { entity } = useEntity();
   if (!entity || !entity?.metadata.name) {
@@ -88,32 +91,11 @@ export const SnykEntityComponent = () => {
     !entity?.metadata.annotations["snyk.io/project-ids"]
   ) {
     return (
-      <Grid
-        container
-        spacing={2}
-        justify="center"
-        direction="column"
-        alignItems="center"
-      >
-        <Grid item>
-          <WarningPanel
-            title="Unable to find snyk project details"
-            message={
-              <>
-                Seems we are missing some references, check out the annotations
-                in{" "}
-                <a href="https://github.com/snyk-tech-services/backstage-test/blob/master/java-goof-component.yaml">
-                  java-goof-component.yaml
-                </a>
-                .
-              </>
-            }
-          />
-        </Grid>
-        <Grid item>
-          <img src="https://i.gifer.com/yH.gif" />
-        </Grid>
-      </Grid>
+      <>
+        <MissingAnnotationEmptyState annotation={SNYK_ANNOTATION_ORG}  />
+        <MissingAnnotationEmptyState annotation={SNYK_ANNOTATION_PROJECTIDS}  />
+      </>
+      
     );
   }
 

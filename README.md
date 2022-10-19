@@ -1,8 +1,8 @@
 # Snyk Backstage Plugin
-[![Not Maintained](https://img.shields.io/badge/Maintenance%20Level-Not%20Maintained-yellow.svg)](https://gist.github.com/cheerfulstoic/d107229326a01ff0f333a1d3476e068d)
+[![Inactively Maintained](https://img.shields.io/badge/Maintenance%20Level-Inactively%20Maintained-yellowgreen.svg)](https://gist.github.com/cheerfulstoic/d107229326a01ff0f333a1d3476e068d)
 
-**This repository is not in active developemnt and critical bug fixes only will be considered.**
 
+**This repository is in maintenance mode, no new features are being developed. Bug & security fixes will continue to be delivered. Open source contributions are welcome for small features & fixes (no breaking changes)**
 
 The Snyk plugin displays security details from [snyk.io](https://snyk.io/).
 
@@ -50,8 +50,8 @@ b. Add the overview card\
 
 ```typescript
 // packages/app/src/components/catalog/EntityPage.tsx
-const overviewContent = (
-  <Grid container spacing={3} alignItems="stretch">
+const entityWarningContent = (
+  <>
     ...
     <EntitySwitch>
       <EntitySwitch.Case if={isSnykAvailable}>
@@ -61,7 +61,7 @@ const overviewContent = (
       </EntitySwitch.Case>
     </EntitySwitch>
     ...
-  </Grid>
+  </>
 );
 ```
 
@@ -87,8 +87,7 @@ proxy:
     target: https://snyk.io/api/v1
     headers:
       User-Agent: tech-services/backstage-plugin/1.0
-      Authorization:
-        $env: SNYK_TOKEN
+      Authorization: token ${SNYK_TOKEN}
   ...
 ```
 
@@ -126,8 +125,7 @@ spec:
 
 ## Troubleshooting
 
-- Missing or wrong token set in the backend proxy. Make sure to have the `token` in the export value
-`export SNYK_TOKEN="token <TOKEN>"`\
+- Missing or wrong token set in the backend proxy.\
 
     ![Missing/wrong token](https://storage.googleapis.com/snyk-technical-services.appspot.com/backstage-screenshots/backstage_card_error_wrong_or_missing_token.png)
 
