@@ -15,7 +15,7 @@ The Snyk plugin displays security details from [snyk.io](https://snyk.io/).
 1. Install plugin
 ```bash
 # packages/app
-yarn add backstage-plugin-snyk
+yarn add --cwd packages/app backstage-plugin-snyk
 ```
 
 2. Add plugin to the app
