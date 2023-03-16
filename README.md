@@ -91,9 +91,9 @@ proxy:
   ...
 ```
 
-5. Get your Snyk token (a service account with Viewer permission at your group level is preferred) and provide SNYK_TOKEN env var with the value "token <YOURTOKEN>"
+5. Get your Snyk token (a service account with Viewer permission at your group level is preferred) and provide SNYK_TOKEN env var with the value "<YOURTOKEN>"
 ```bash
-export SNYK_TOKEN="token 123-123-123-123"
+export SNYK_TOKEN="123-123-123-123"
 ```
 
 6. Add the following annotations to your entities.
