@@ -26,7 +26,7 @@ jobs:
             severity-threshold: high
             monitor-on-build: true
             token-variable: SNYK_TEST_TOKEN
-        - run: yarn run semantic-release@19
+        - run: yarn run semantic-release
 
   build-test:
       docker:
