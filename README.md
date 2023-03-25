@@ -84,7 +84,7 @@ proxy:
   ...
 
   '/snyk':
-    target: https://snyk.io/api/v1
+    target: https://api.snyk.io/v1
     headers:
       User-Agent: tech-services/backstage-plugin/1.0
       Authorization: token ${SNYK_TOKEN}
@@ -133,7 +133,7 @@ spec:
 - 404s from Snyk API? Add [pathRewrite your app-config.yaml proxy](https://github.com/snyk-tech-services/backstage-plugin-snyk/issues/11) to the following
 ```yaml
 '/snyk':
-    target: https://snyk.io/api/v1
+    target: https://api.snyk.io/v1
     headers:
       User-Agent: tech-services/backstage-plugin/1.0
       Authorization:
