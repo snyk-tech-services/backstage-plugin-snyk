@@ -19,6 +19,7 @@ import {
   discoveryApiRef,
   createRoutableExtension,
   createComponentExtension,
+  configApiRef,
 } from "@backstage/core-plugin-api";
 import { SnykApiClient, snykApiRef } from "./api";
 import { entityContentRouteRef } from "./routes";
@@ -28,8 +29,8 @@ export const backstagePluginSnykPlugin: any = createPlugin({
   apis: [
     createApiFactory({
       api: snykApiRef,
-      deps: { discoveryApi: discoveryApiRef },
-      factory: ({ discoveryApi }) => new SnykApiClient({ discoveryApi }),
+      deps: { discoveryApi: discoveryApiRef, configApiRef: configApiRef },
+      factory: ({ discoveryApi, configApiRef }) => new SnykApiClient({ discoveryApi, configApiRef }),
     }),
   ],
   routes: {

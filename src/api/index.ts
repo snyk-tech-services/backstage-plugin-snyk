@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ApiRef, createApiRef, DiscoveryApi } from "@backstage/core-plugin-api";
+import { ApiRef, ConfigApi, createApiRef, DiscoveryApi } from "@backstage/core-plugin-api";
 
 const DEFAULT_PROXY_PATH_BASE = "";
 
@@ -24,11 +24,13 @@ type Options = {
    * Path to use for requests via the proxy, defaults to ''
    */
   proxyPathBase?: string;
+  configApiRef: ConfigApi
 };
 //@ts-ignore
 export const snykApiRef: ApiRef<SnykApi> = createApiRef<SnykApi>({
   id: "plugin.snyk.service",
 });
+
 
 export interface SnykApi {
   ListAllAggregatedIssues(orgName: string, projectId: string): Promise<any>;
@@ -40,11 +42,13 @@ export interface SnykApi {
   ProjectDetails(orgName: string, projectId: string): Promise<any>;
   ProjectList(orgName: string): Promise<any>;
   GetDependencyGraph(orgName: string, projectId: string): Promise<any>;
+  GetSnykAppHost(): string
 }
 
 export class SnykApiClient implements SnykApi {
   private readonly discoveryApi: DiscoveryApi;
   private readonly proxyPathBase: string;
+  private readonly configApiRef: ConfigApi
 
   private headers = {
     "Content-Type": "application/json",
@@ -52,6 +56,7 @@ export class SnykApiClient implements SnykApi {
   };
   constructor(options: Options) {
     this.discoveryApi = options.discoveryApi;
+    this.configApiRef = options.configApiRef
     this.proxyPathBase = options.proxyPathBase ?? DEFAULT_PROXY_PATH_BASE;
   }
 
@@ -59,6 +64,10 @@ export class SnykApiClient implements SnykApi {
     const baseUrl = await this.discoveryApi.getBaseUrl("proxy");
     // const baseUrl = await this.discoveryApi.getBaseUrl('snyk');
     return `${baseUrl}${this.proxyPathBase}/snyk`;
+  }
+
+  GetSnykAppHost () {
+    return this.configApiRef.getOptionalString('snyk.AppHost') ?? 'app.snyk.io'
   }
 
   async ListAllAggregatedIssues(orgName: string, projectId: string) {
