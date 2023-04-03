@@ -80,7 +80,7 @@ export const generateSnykTabForProject = (
     };
     const linkInfo = {
       title: "More details",
-      link: `https://app.snyk.io/org/${orgName}/project/${projectId}`,
+      link: `https://${snykApi.GetSnykAppHost()}/org/${orgName}/project/${projectId}`,
     };
 
     return (

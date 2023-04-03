@@ -91,6 +91,12 @@ proxy:
   ...
 ```
 
+Optional if using Snyk in other regions (not using app.snyk.io), set the hostname you're seeing in your address bar
+```yaml
+snyk:
+  AppHost: app.eu.snyk.io
+```
+
 5. Get your Snyk token (a service account with Viewer permission at your group level is preferred) and provide SNYK_TOKEN env var with the value "<YOURTOKEN>"
 ```bash
 export SNYK_TOKEN="123-123-123-123"

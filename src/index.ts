@@ -23,3 +23,4 @@ export {
   isPluginApplicableToEntity,
   isPluginApplicableToEntity as isSnykAvailable,
 } from './components/SnykEntityComponent';
+
