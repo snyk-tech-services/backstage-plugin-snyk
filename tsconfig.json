@@ -1,13 +1,13 @@
 {
     "include": [
-        "./src/**/*"
-      ],
+        "./src/**/*",
+        "config.d.ts"  ],
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
         "outDir": "dist",
         "allowJs": true,
         "declaration": true,
-        "declarationMap": false,
+        "declarationMap": true,
         "emitDeclarationOnly": false,
         "experimentalDecorators": false,
         "forceConsistentCasingInFileNames": true,
