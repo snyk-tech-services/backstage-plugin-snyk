@@ -145,8 +145,6 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
     link: `snyk/`,
   };
 
-  console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-
   return (
     <InfoCard
       title="Vulnerabilities"
