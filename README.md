@@ -6,7 +6,7 @@
 
 The Snyk plugin displays security details from [snyk.io](https://snyk.io/).
 
-![Snyk Tab](https://storage.googleapis.com/snyk-technical-services.appspot.com/backstage-screenshots/backstage-snyk-plugin-tab.png)
+![Snyk Tab](docs/assets/backstage-snyk-plugin-tab.png)
 
 ## Getting started
 
@@ -46,7 +46,7 @@ import { SnykOverview, EntitySnykContent, isSnykAvailable } from 'backstage-plug
 
 b. Add the overview card\
 \
-![Overview card](https://storage.googleapis.com/snyk-technical-services.appspot.com/backstage-screenshots/backstage-plugin-overview-card.png)
+![Overview card](docs/assets/backstage-snyk-plugin-overview-card.png)
 
 ```typescript
 // packages/app/src/components/catalog/EntityPage.tsx
@@ -133,7 +133,7 @@ spec:
 
 - Missing or wrong token set in the backend proxy.\
 
-    ![Missing/wrong token](https://storage.googleapis.com/snyk-technical-services.appspot.com/backstage-screenshots/backstage_card_error_wrong_or_missing_token.png)
+    ![Missing/wrong token](docs/assets/backstage_card_error_wrong_or_missing_token.png)
 
 
 - 404s from Snyk API? Add [pathRewrite your app-config.yaml proxy](https://github.com/snyk-tech-services/backstage-plugin-snyk/issues/11) to the following
