@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-import { ApiRef, ConfigApi, createApiRef, DiscoveryApi } from "@backstage/core-plugin-api";
+import {
+  ApiRef,
+  ConfigApi,
+  createApiRef,
+  DiscoveryApi,
+} from "@backstage/core-plugin-api";
+import { TargetData } from "../types/targetsTypes";
 
 const DEFAULT_PROXY_PATH_BASE = "";
 
@@ -24,31 +30,25 @@ type Options = {
    * Path to use for requests via the proxy, defaults to ''
    */
   proxyPathBase?: string;
-  configApiRef: ConfigApi
+  configApiRef: ConfigApi;
 };
 //@ts-ignore
 export const snykApiRef: ApiRef<SnykApi> = createApiRef<SnykApi>({
   id: "plugin.snyk.service",
 });
 
-
 export interface SnykApi {
   ListAllAggregatedIssues(orgName: string, projectId: string): Promise<any>;
-  ListAllAggregatedLicenseIssues(
-    orgName: string,
-    projectId: string
-  ): Promise<any>;
-  ListAllIgnoredIssues(orgName: string, projectId: string): Promise<any>;
   ProjectDetails(orgName: string, projectId: string): Promise<any>;
-  ProjectList(orgName: string): Promise<any>;
+  ProjectsList(orgName: string, repoName:string): Promise<any>;
   GetDependencyGraph(orgName: string, projectId: string): Promise<any>;
-  GetSnykAppHost(): string
+  GetSnykAppHost(): string;
 }
 
 export class SnykApiClient implements SnykApi {
   private readonly discoveryApi: DiscoveryApi;
   private readonly proxyPathBase: string;
-  private readonly configApiRef: ConfigApi
+  private readonly configApiRef: ConfigApi;
 
   private headers = {
     "Content-Type": "application/json",
@@ -56,34 +56,27 @@ export class SnykApiClient implements SnykApi {
   };
   constructor(options: Options) {
     this.discoveryApi = options.discoveryApi;
-    this.configApiRef = options.configApiRef
+    this.configApiRef = options.configApiRef;
     this.proxyPathBase = options.proxyPathBase ?? DEFAULT_PROXY_PATH_BASE;
   }
 
   private async getApiUrl() {
     const baseUrl = await this.discoveryApi.getBaseUrl("proxy");
-    // const baseUrl = await this.discoveryApi.getBaseUrl('snyk');
     return `${baseUrl}${this.proxyPathBase}/snyk`;
   }
 
-  GetSnykAppHost () {
-    return this.configApiRef.getOptionalString('snyk.AppHost') ?? 'app.snyk.io'
+  GetSnykAppHost() {
+    return this.configApiRef.getOptionalString("snyk.AppHost") ?? "app.snyk.io";
   }
 
-  async ListAllAggregatedIssues(orgName: string, projectId: string) {
+  async ListAllAggregatedIssues(orgId: string, projectId: string) {
     const backendBaseUrl = await this.getApiUrl();
-    const apiUrl = `${backendBaseUrl}/org/${orgName}/project/${projectId}/aggregated-issues`;
-    const body = {
-      includeDescription: false,
-      filters: {
-        types: ["vuln"],
-        ignored: false,
-      },
-    };
+    let v3Headers = this.headers;
+    v3Headers["Content-Type"] = "application/vnd.api+json";
+    const apiUrl = `${backendBaseUrl}/rest/orgs/${orgId}/issues?version=2023-06-19~experimental&scan_item.id=${projectId}&scan_item.type=project&limit=100`;
     const response = await fetch(`${apiUrl}`, {
-      method: "POST",
-      headers: this.headers,
-      body: JSON.stringify(body),
+      method: "GET",
+      headers: v3Headers
     });
 
     if (response.status >= 400 && response.status < 600) {
@@ -93,57 +86,13 @@ export class SnykApiClient implements SnykApi {
     }
     const jsonResponse = await response.json();
     return jsonResponse;
+    
+    
   }
-  async ListAllAggregatedLicenseIssues(orgName: string, projectId: string) {
-    const backendBaseUrl = await this.getApiUrl();
-    const apiUrl = `${backendBaseUrl}/org/${orgName}/project/${projectId}/aggregated-issues`;
-    const body = {
-      includeDescription: false,
-      filters: {
-        types: ["license"],
-        ignored: false,
-      },
-    };
-    const response = await fetch(`${apiUrl}`, {
-      method: "POST",
-      headers: this.headers,
-      body: JSON.stringify(body),
-    });
-
-    if (response.status >= 400 && response.status < 600) {
-      throw new Error(
-        `Error ${response.status} - Failed fetching License Issues snyk data`
-      );
-    }
-    const jsonResponse = await response.json();
-    return jsonResponse;
-  }
-  async ListAllIgnoredIssues(orgName: string, projectId: string) {
-    const backendBaseUrl = await this.getApiUrl();
-    const apiUrl = `${backendBaseUrl}/org/${orgName}/project/${projectId}/aggregated-issues`;
-    const body = {
-      includeDescription: false,
-      filters: {
-        ignored: true,
-      },
-    };
-    const response = await fetch(`${apiUrl}`, {
-      method: "POST",
-      headers: this.headers,
-      body: JSON.stringify(body),
-    });
-
-    if (response.status >= 400 && response.status < 600) {
-      throw new Error(
-        `Error ${response.status} - Failed fetching Ignored Issues snyk data`
-      );
-    }
-    const jsonResponse = await response.json();
-    return jsonResponse;
-  }
+  
   async ProjectDetails(orgName: string, projectId: string) {
     const backendBaseUrl = await this.getApiUrl();
-    const apiUrl = `${backendBaseUrl}/org/${orgName}/project/${projectId}`;
+    const apiUrl = `${backendBaseUrl}/v1/org/${orgName}/project/${projectId}`;
     const response = await fetch(`${apiUrl}`, {
       headers: this.headers,
     });
@@ -157,28 +106,59 @@ export class SnykApiClient implements SnykApi {
     return jsonResponse;
   }
 
-  async ProjectList(orgName: string) {
+  async ProjectsList(orgId: string, repoName: string) {
+    if(repoName == ''){
+      throw new Error(
+        `Error - Unable to find repo name. Please add github.com/project-slug or snyk.io/target-id annotation`
+      );
+    }
     const backendBaseUrl = await this.getApiUrl();
-    const apiUrl = `${backendBaseUrl}/org/${orgName}/projects`;
-    const body = { filters: {} };
-    const response = await fetch(`${apiUrl}`, {
-      method: "POST",
-      headers: this.headers,
-      body: JSON.stringify(body),
+    let v3Headers = this.headers;
+    v3Headers["Content-Type"] = "application/vnd.api+json";
+    let targetId
+    if(/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/.test(repoName)){
+      targetId = repoName
+    } else {
+      const targetsAPIUrl = `${backendBaseUrl}/rest/orgs/${orgId}/targets?displayName=${encodeURIComponent(repoName)}&version=2023-06-19~beta`;
+      const targetResponse = await fetch(`${targetsAPIUrl}`, {
+        method: "GET",
+        headers: v3Headers,
+      });
+      if (targetResponse.status >= 400 && targetResponse.status < 600) {
+        throw new Error(
+          `Error ${targetResponse.status} - Failed fetching Targets list snyk data`
+        );
+      }
+      const targetsList = await targetResponse.json()
+      const targetsListData = targetsList.data as TargetData[]
+      targetId = targetsListData.find(target => {
+        return target.attributes.displayName == repoName
+      })?.id
+      if(!targetId){
+        throw new Error(
+          `Error - Failed finding Target snyk data for repo ${repoName}`
+        );
+      }
+    }
+    
+    const projectsForTargetUrl = `${backendBaseUrl}/rest/orgs/${orgId}/projects?target_id=${targetId}&version=2023-06-19~beta`;
+    const response = await fetch(`${projectsForTargetUrl}`, {
+      method: "GET",
+      headers: v3Headers,
     });
-
+    
     if (response.status >= 400 && response.status < 600) {
       throw new Error(
         `Error ${response.status} - Failed fetching Projects list snyk data`
       );
     }
     const jsonResponse = await response.json();
-    return jsonResponse;
+    return jsonResponse.data;
   }
 
   async GetDependencyGraph(orgName: string, projectId: string) {
     const backendBaseUrl = await this.getApiUrl();
-    const apiUrl = `${backendBaseUrl}/org/${orgName}/project/${projectId}/dep-graph`;
+    const apiUrl = `${backendBaseUrl}/v1/org/${orgName}/project/${projectId}/dep-graph`;
     const response = await fetch(`${apiUrl}`, {
       headers: this.headers,
     });

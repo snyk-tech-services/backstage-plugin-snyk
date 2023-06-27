@@ -1,19 +1,21 @@
-import { issuesCount, IssuesArray } from "../types/types";
 
-export const getIssuesCount = (issues: IssuesArray): issuesCount => {
-  const criticalSevCount = issues.issues.filter(
-    (issue) => issue.issueData.severity == "critical"
-  ).length;
-  const highSevCount = issues.issues.filter(
-    (issue) => issue.issueData.severity == "high"
-  ).length;
-  const mediumSevCount = issues.issues.filter(
-    (issue) => issue.issueData.severity == "medium"
-  ).length;
-  const lowSevCount = issues.issues.filter(
-    (issue) => issue.issueData.severity == "low"
-  ).length;
+import { issuesCount } from "../types/types";
+import { Issue } from "../types/unifiedIssuesTypes";
 
+export const getIssuesCount = (issues: Array<Issue>): issuesCount => {
+  
+  const criticalSevCount = issues.filter(
+    (issue) => issue.attributes.effective_severity_level == "critical"
+  ).length;
+  const highSevCount = issues.filter(
+    (issue) => issue.attributes.effective_severity_level == "high"
+  ).length;
+  const mediumSevCount = issues.filter(
+    (issue) => issue.attributes.effective_severity_level == "medium"
+  ).length;
+  const lowSevCount = issues.filter(
+    (issue) => issue.attributes.effective_severity_level == "low"
+  ).length;
   return {
     critical: criticalSevCount,
     high: highSevCount,
@@ -22,7 +24,8 @@ export const getIssuesCount = (issues: IssuesArray): issuesCount => {
   };
 };
 
-export const extractTargetShortname = (rawName: string): String => {
+
+export const extractTargetShortname = (rawName: string): string => {
   let name = "";
   const tokenizedName = rawName.split(":");
   if (tokenizedName.length == 2) {

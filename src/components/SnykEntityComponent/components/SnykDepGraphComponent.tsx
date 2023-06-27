@@ -30,7 +30,7 @@ export const DepGraphInfo: FC<DepGraphProps> = ({ depGraph }) => {
   };
   return (
     <InfoCard>
-      <Grid container spacing={2} justify="space-between" direction="column">
+      <Grid container spacing={2} justifyContent="space-between" direction="column">
         <Grid item>
           Total Dependency count = {totalCount}
           <br />

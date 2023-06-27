@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { Table, TableColumn, Link } from "@backstage/core-components";
-import { Issue } from "../../../types/types";
+import { Issue } from "../../../types/unifiedIssuesTypes";
 
 type DenseTableProps = {
   issues: Array<Issue>;
@@ -11,21 +11,21 @@ export const IssuesTable: FC<DenseTableProps> = ({ issues, pageUrl }) => {
   const columns: TableColumn[] = [
     { title: "Severity", field: "severity" },
     { title: "ID", field: "id" },
-    { title: "Name", field: "name" },
-    { title: "Versions", field: "versions" },
+    { title: "Type", field: "type" },
+    { title: "Status", field: "status" },
     { title: "Description", field: "description" },
     { title: "Priority Score", field: "priority" },
   ];
 
   const data = issues.map((issue) => {
-    const deepLinkToIssue = <Link to={`${pageUrl}#issue-${issue.id}`}>{issue.id}</Link>
+    const deepLinkToIssue = <Link to={`${pageUrl}#issue-${issue.attributes.key}`}>{issue.attributes.key.substring(0,35)}...</Link>
     return {
-      severity: issue.issueData.severity,
+      severity: issue.attributes.effective_severity_level,
       id: deepLinkToIssue,
-      name: issue.pkgName,
-      versions: issue.pkgVersions,
-      description: issue.issueData.title,
-      priority: issue.priority?.score || "",
+      type: issue.attributes.type,
+      status: issue.attributes.status,
+      description: issue.attributes.title,
+      priority: issue.attributes.priority?.score || "",
     };
   });
 
