@@ -84,7 +84,7 @@ proxy:
   ...
 
   '/snyk':
-    target: https://api.snyk.io/v1
+    target: https://api.snyk.io/
     headers:
       User-Agent: tech-services/backstage-plugin/1.0
       Authorization: token ${SNYK_TOKEN}

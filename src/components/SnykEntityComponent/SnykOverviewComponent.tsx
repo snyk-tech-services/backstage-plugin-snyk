@@ -11,12 +11,14 @@ import { snykApiRef } from "../../api";
 import { useAsync } from "react-use";
 import { Alert } from "@material-ui/lab";
 import * as utils from "../../utils/utils";
-import { ProjectsPostResponseType } from "../../types/types";
+import { ProjectsData } from "../../types/projectsTypes";
 
 import { Grid } from "@material-ui/core";
 import { SnykCircularCounter } from "./components/SnykCircularCountersComponent";
-import { issuesCount, IssuesArray } from "../../types/types";
+import { issuesCount } from "../../types/types";
 import { useEntity } from "@backstage/plugin-catalog-react";
+import { UnifiedIssues } from "../../types/unifiedIssuesTypes";
+import { SNYK_ANNOTATION_ORG, SNYK_ANNOTATION_TARGETID, SNYK_ANNOTATION_TARGETNAME } from "../../config";
 
 export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
   if (!entity || !entity?.metadata.name) {
@@ -25,8 +27,8 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
 
   if (
     !entity.metadata.annotations ||
-    !entity.metadata.annotations?.["snyk.io/org-name"] ||
-    !entity.metadata.annotations?.["snyk.io/project-ids"]
+    !entity.metadata.annotations?.[SNYK_ANNOTATION_ORG] ||
+    !(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETNAME] || entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETID])
   ) {
     return (
       <Grid
@@ -43,8 +45,8 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
               <>
                 Seems we are missing some references, check out the example
                 annotations in{" "}
-                <a href="https://github.com/snyk-tech-services/backstage-test/blob/master/java-goof-component.yaml">
-                  java-goof-component.yaml
+                <a href="https://github.com/aarlaud-playground/goof/blob/master/backstage-catalog-info.yaml">
+                  backstage-catalog-info.yaml
                 </a>
                 .
               </>
@@ -59,7 +61,7 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
   }
 
   const snykApi = useApi(snykApiRef);
-  const orgName = entity?.metadata.annotations?.["snyk.io/org-name"] || "null";
+  const orgId = entity?.metadata.annotations?.[SNYK_ANNOTATION_ORG] || "null";
 
   const { value, loading, error } = useAsync(async () => {
     let aggregatedIssuesCount: issuesCount = {
@@ -68,25 +70,12 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
       medium: 0,
       low: 0,
     };
-
-    const fullProjectList: ProjectsPostResponseType = await snykApi.ProjectList(
-      orgName
-    );
-    const projectIdsFromAnnotations: Record<string, string> =
-      entity?.metadata.annotations || {};
-    const projectList = fullProjectList.projects?.filter(
-      (project) =>
-        project.id &&
-        utils
-          .extractProjectIdFromAnnotations(projectIdsFromAnnotations)
-          .includes(project.id)
-    );
-
+    const fullProjectList = await snykApi.ProjectsList(orgId, entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETNAME] || entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETID] || '');
+    const projectList = fullProjectList as ProjectsData[];
+    
     let projectsCount = 0;
 
-    const projectIds = utils.extractProjectIdFromAnnotations(
-      projectIdsFromAnnotations
-    );
+    const projectIds = projectList.map(project => project.id)
     for (let i = 0; i < projectIds.length; i++) {
       if (
         projectList?.some(
@@ -94,15 +83,18 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
         )
       ) {
         projectsCount++;
-        const vulnsIssues: IssuesArray = await snykApi.ListAllAggregatedIssues(
-          orgName,
-          projectIds[i]
-        );
-        const currentProjectIssuesCount = utils.getIssuesCount(vulnsIssues);
-        aggregatedIssuesCount.critical += currentProjectIssuesCount.critical;
-        aggregatedIssuesCount.high += currentProjectIssuesCount.high;
-        aggregatedIssuesCount.medium += currentProjectIssuesCount.medium;
-        aggregatedIssuesCount.low += currentProjectIssuesCount.low;
+
+          const vulnsIssues: UnifiedIssues = await snykApi.ListAllAggregatedIssues(
+            orgId,
+            projectIds[i]
+          );
+          const currentProjectIssuesCount = utils.getIssuesCount(vulnsIssues.data);
+          aggregatedIssuesCount.critical += currentProjectIssuesCount.critical;
+          aggregatedIssuesCount.high += currentProjectIssuesCount.high;
+          aggregatedIssuesCount.medium += currentProjectIssuesCount.medium;
+          aggregatedIssuesCount.low += currentProjectIssuesCount.low;
+        
+          
       }
     }
     return { aggregatedIssuesCount, projectsCount };
@@ -146,10 +138,7 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
   };
 
   return (
-    <InfoCard
-      title="Vulnerabilities"
-      deepLink={linkInfo}
-    >
+    <InfoCard title="Vulnerabilities" deepLink={linkInfo}>
       <SnykCircularCounter issuesCount={issuesCount} />
     </InfoCard>
   );
