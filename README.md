@@ -128,6 +128,9 @@ spec:
   ....
 ```
 
+## Migration steps from version 1.x to 2.x
+- Update the proxy target to not contain /v1
+- snyk.io/project-ids annotations are no longer in use, instead replaced by targets designated by github.com/project-slug or snyk.io/target-id.
 
 ## Troubleshooting
 
@@ -139,7 +142,7 @@ spec:
 - 404s from Snyk API? Add [pathRewrite your app-config.yaml proxy](https://github.com/snyk-tech-services/backstage-plugin-snyk/issues/11) to the following
 ```yaml
 '/snyk':
-    target: https://api.snyk.io/v1
+    target: https://api.snyk.io/
     headers:
       User-Agent: tech-services/backstage-plugin/1.0
       Authorization:
