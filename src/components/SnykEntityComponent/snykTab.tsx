@@ -25,6 +25,7 @@ import { Issue, TypeDef, UnifiedIssues } from "../../types/unifiedIssuesTypes";
 export const generateSnykTabForProject = (
   snykApi: SnykApi,
   orgId: string,
+  orgSlug: string,
   projectId: string,
   orgDisplayName?: string
 ) => {
@@ -75,7 +76,7 @@ export const generateSnykTabForProject = (
     };
     const linkInfo = {
       title: "More details",
-      link: `https://${snykApi.GetSnykAppHost()}/org/${orgDisplayName}/project/${projectId}`,
+      link: `https://${snykApi.GetSnykAppHost()}/org/${orgSlug}/project/${projectId}`,
     };
     if(value.depGraph){
       return (

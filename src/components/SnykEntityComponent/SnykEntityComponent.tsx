@@ -8,7 +8,7 @@ import {
   
 } from "@backstage/core-components";
 import { useApi } from "@backstage/core-plugin-api";
-import { MissingAnnotationEmptyState } from "@backstage/core-components";
+import { MissingAnnotationEmptyState, InfoCard } from "@backstage/core-components";
 import { snykApiRef } from "../../api";
 import { useAsync } from "react-use";
 import { Alert } from "@material-ui/lab";
@@ -103,7 +103,8 @@ export const SnykEntityComponent = () => {
       orgId,
       entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETNAME] || entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETID] || ''
     );
-    return { fullProjectList };
+    const orgSlug = await snykApi.GetOrgSlug(orgId)
+    return { fullProjectList, orgSlug };
   });
   if (loading) {
     return (
@@ -117,24 +118,29 @@ export const SnykEntityComponent = () => {
   }
 
   const projectList = value?.fullProjectList as ProjectsData[];
-
+  const orgSlug = value?.orgSlug || ''
   projectList.forEach((project) => {
     tabs.push({
       name: utils.extractTargetShortname(project.attributes.name || "unknown"),
       icon: getIconForProjectType(project.attributes.origin || ""),
-      tabContent: generateSnykTabForProject(snykApi, orgId, project.id,entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETNAME] || entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETID] || ''),
+      tabContent: generateSnykTabForProject(snykApi, orgId, orgSlug, project.id,entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETNAME] || entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETID] || ''),
       type: project.attributes.type,
     });
   });
 
+    const infoCardTitle = `${tabs.length} Project${tabs.length>1? 's' : '' }`
+
   return (
-    
+    <><InfoCard title={infoCardTitle} cardClassName="infocardstyle">
+      
       <TabbedLayout>
         {tabs.map(tab => (
-          <TabbedLayout.Route key={tab.name+tab.type} path={tab.name} title={tab.type}>
+          <TabbedLayout.Route key={tab.name+tab.type} path={tab.name} title={`(${tab.type}) ${tab.name.substring(0,15)}${tab.name.length > 15 ? '...':''}`}>
         <Content><tab.tabContent /></Content>
       </TabbedLayout.Route>
         ))}</TabbedLayout>
+  </InfoCard>
+  </>
   
   );
 };
