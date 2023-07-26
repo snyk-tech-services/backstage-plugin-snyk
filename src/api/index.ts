@@ -21,6 +21,7 @@ import {
   DiscoveryApi,
 } from "@backstage/core-plugin-api";
 import { TargetData } from "../types/targetsTypes";
+import { OrgData } from "../types/orgsTypes";
 
 const DEFAULT_PROXY_PATH_BASE = "";
 
@@ -43,6 +44,7 @@ export interface SnykApi {
   ProjectsList(orgName: string, repoName:string): Promise<any>;
   GetDependencyGraph(orgName: string, projectId: string): Promise<any>;
   GetSnykAppHost(): string;
+  GetOrgSlug(orgId: string): Promise<string>;
 }
 
 export class SnykApiClient implements SnykApi {
@@ -106,6 +108,27 @@ export class SnykApiClient implements SnykApi {
     return jsonResponse;
   }
 
+  async GetOrgSlug(orgId: string) {
+    const backendBaseUrl = await this.getApiUrl();
+    let v3Headers = this.headers;
+    v3Headers["Content-Type"] = "application/vnd.api+json";
+
+
+    const orgsAPIUrl = `${backendBaseUrl}/rest/orgs/${orgId}?version=2023-06-19~beta`;
+      const orgResponse = await fetch(`${orgsAPIUrl}`, {
+        method: "GET",
+        headers: v3Headers,
+      });
+      if (orgResponse.status >= 400 && orgResponse.status < 600) {
+        throw new Error(
+          `Error ${orgResponse.status} - Failed fetching Org data`
+        );
+      }
+      const orgResponseData = await orgResponse.json()
+      const orgData = orgResponseData.data as OrgData
+      return orgData.attributes.slug
+  }
+
   async ProjectsList(orgId: string, repoName: string) {
     if(repoName == ''){
       throw new Error(
@@ -141,7 +164,7 @@ export class SnykApiClient implements SnykApi {
       }
     }
     
-    const projectsForTargetUrl = `${backendBaseUrl}/rest/orgs/${orgId}/projects?target_id=${targetId}&version=2023-06-19~beta`;
+    const projectsForTargetUrl = `${backendBaseUrl}/rest/orgs/${orgId}/projects?target_id=${targetId}&limit=100&version=2023-06-19~beta`;
     const response = await fetch(`${projectsForTargetUrl}`, {
       method: "GET",
       headers: v3Headers,
