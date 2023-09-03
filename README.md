@@ -102,35 +102,40 @@ snyk:
 export SNYK_TOKEN="123-123-123-123"
 ```
 
-6. Add the following annotations to your entities.
+6. Add this following annotation to your entities.
 - `snyk.io/org-name` is the Snyk organization name where your project is. Use the slug (like in url, or in the org settings page), not the display name
+
+7. Then add one or more than one of the following annotations to your entities.
+- `snyk.io/target-id` specify a single target by name or ID. Target ID will avoid an API call and be therefore faster. Use this [API endpoint](https://apidocs.snyk.io/?version=2023-06-19%7Ebeta#get-/orgs/-org_id-/targets) to get the Target IDs.
+- `snyk.io/targets` specify one or more targets, by name or ID. Target ID will avoid an API call and be therefore faster. Use this [API endpoint](https://apidocs.snyk.io/?version=2023-06-19%7Ebeta#get-/orgs/-org_id-/targets) to get the Target IDs.
 - `snyk.io/project-ids` are the project ID (see slug in url or ID in project settings)
 If multiple projects (like multiple package.json or pom files, add them with increasing number), add them comma separated
+- `snyk.io/exclude-project-ids` to exclude specific projects you might not want.
 ....
-
 
 Example:
 ```yaml
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: Java-goof
-  description: Java Goof
-  ....
+  name: goof
+  description: Goof
   annotations:
-    snyk.io/org-name: snyk-demo-org
-    snyk.io/project-ids: 12345678-1234-1234-1234-123456789012,12345678-1234-1234-1234-123456789013,12345678-1234-1234-1234-123456789014
-  ...
+    snyk.io/org-id: 361fd3c0-41d4-4ea4-ba77-09bb17890967
+    snyk.io/targets: Snyk Demo/java-goof,508d2263-ea8a-4e42-bc9d-844de21f4172
+    snyk.io/target-id: aarlaud-snyk/github-stats
+    snyk.io/project-ids: 7439e322-f9c1-4c42-8367-002b33b9d946,db066cb9-b373-46da-b918-b49b541e0d63
+    snyk.io/exclude-project-ids: 4737fc9c-3894-40ba-9dc5-aa8ae658c9f6,38e02916-0cf7-4927-ba98-06afae9fef36
 spec:
   type: service
   lifecycle: production
   owner: guest
   ....
 ```
+Some more examples can be found in [here](https://github.com/snyk-tech-services/backstage-plugin-snyk/tree/develop/test/fixtures)
 
 ## Migration steps from version 1.x to 2.x
 - Update the proxy target to not contain /v1
-- snyk.io/project-ids annotations are no longer in use, instead replaced by targets designated by github.com/project-slug or snyk.io/target-id.
 
 ## Troubleshooting
 

@@ -5,7 +5,7 @@ import {
   InfoCard,
   Content,
   TabbedCard,
-  CardTab,
+  CardTab
 } from "@backstage/core-components";
 import { Grid } from "@material-ui/core";
 import { SnykApi } from "../../api/index";
@@ -26,8 +26,7 @@ export const generateSnykTabForProject = (
   snykApi: SnykApi,
   orgId: string,
   orgSlug: string,
-  projectId: string,
-  orgDisplayName?: string
+  projectId: string
 ) => {
   const genericIssuesTypeArray = Object.values(TypeDef).filter(type => type != 'license')
   return ({}) => {
@@ -71,8 +70,9 @@ export const generateSnykTabForProject = (
     const metadata = {
       origin: value.projectDetails.origin,
       type: value.projectDetails.type,
+      "created": value.projectDetails.created,
       "last tested": value.projectDetails.lastTestedDate,
-      repository: value.projectDetails.remoteRepoUrl || orgDisplayName,
+      "Project ID": `${value.projectDetails.id}`
     };
     const linkInfo = {
       title: "More details",

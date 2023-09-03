@@ -11,14 +11,19 @@ import { snykApiRef } from "../../api";
 import { useAsync } from "react-use";
 import { Alert } from "@material-ui/lab";
 import * as utils from "../../utils/utils";
-import { ProjectsData } from "../../types/projectsTypes";
 
 import { Grid } from "@material-ui/core";
 import { SnykCircularCounter } from "./components/SnykCircularCountersComponent";
 import { issuesCount } from "../../types/types";
 import { useEntity } from "@backstage/plugin-catalog-react";
 import { UnifiedIssues } from "../../types/unifiedIssuesTypes";
-import { SNYK_ANNOTATION_ORG, SNYK_ANNOTATION_TARGETID, SNYK_ANNOTATION_TARGETNAME } from "../../config";
+import {
+  SNYK_ANNOTATION_ORG,
+  SNYK_ANNOTATION_PROJECTIDS,
+  SNYK_ANNOTATION_TARGETID,
+  SNYK_ANNOTATION_TARGETNAME,
+  SNYK_ANNOTATION_TARGETS,
+} from "../../config";
 
 export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
   if (!entity || !entity?.metadata.name) {
@@ -28,7 +33,12 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
   if (
     !entity.metadata.annotations ||
     !entity.metadata.annotations?.[SNYK_ANNOTATION_ORG] ||
-    !(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETNAME] || entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETID])
+    !(
+      entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETNAME] ||
+      entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETID] ||
+      entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETS] ||
+      entity.metadata.annotations?.[SNYK_ANNOTATION_PROJECTIDS]
+    )
   ) {
     return (
       <Grid
@@ -70,12 +80,16 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
       medium: 0,
       low: 0,
     };
-    const fullProjectList = await snykApi.ProjectsList(orgId, entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETNAME] || entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETID] || '');
-    const projectList = fullProjectList as ProjectsData[];
-    
+    const projectList = entity?.metadata.annotations
+      ? await snykApi.GetCompleteProjectsListFromAnnotations(
+          orgId,
+          entity.metadata.annotations
+        )
+      : [];
+
     let projectsCount = 0;
 
-    const projectIds = projectList.map(project => project.id)
+    const projectIds = projectList.map((project) => project.id);
     for (let i = 0; i < projectIds.length; i++) {
       if (
         projectList?.some(
@@ -84,17 +98,15 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
       ) {
         projectsCount++;
 
-          const vulnsIssues: UnifiedIssues = await snykApi.ListAllAggregatedIssues(
-            orgId,
-            projectIds[i]
-          );
-          const currentProjectIssuesCount = utils.getIssuesCount(vulnsIssues.data);
-          aggregatedIssuesCount.critical += currentProjectIssuesCount.critical;
-          aggregatedIssuesCount.high += currentProjectIssuesCount.high;
-          aggregatedIssuesCount.medium += currentProjectIssuesCount.medium;
-          aggregatedIssuesCount.low += currentProjectIssuesCount.low;
-        
-          
+        const vulnsIssues: UnifiedIssues =
+          await snykApi.ListAllAggregatedIssues(orgId, projectIds[i]);
+        const currentProjectIssuesCount = utils.getIssuesCount(
+          vulnsIssues.data
+        );
+        aggregatedIssuesCount.critical += currentProjectIssuesCount.critical;
+        aggregatedIssuesCount.high += currentProjectIssuesCount.high;
+        aggregatedIssuesCount.medium += currentProjectIssuesCount.medium;
+        aggregatedIssuesCount.low += currentProjectIssuesCount.low;
       }
     }
     return { aggregatedIssuesCount, projectsCount };
