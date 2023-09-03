@@ -1,0 +1,15 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: goof
+  description: Goof
+  annotations:
+    snyk.io/org-id: 361fd3c0-41d4-4ea4-ba77-09bb17890967
+    snyk.io/targets: Snyk Demo/java-goof,508d2263-ea8a-4e42-bc9d-844de21f4172
+    snyk.io/target-id: aarlaud-snyk/github-stats
+    snyk.io/project-ids: 7439e322-f9c1-4c42-8367-002b33b9d946,db066cb9-b373-46da-b918-b49b541e0d63
+    snyk.io/exclude-project-ids: 4737fc9c-3894-40ba-9dc5-aa8ae658c9f6,38e02916-0cf7-4927-ba98-06afae9fef36
+spec:
+  type: service
+  lifecycle: production
+  owner: guest
