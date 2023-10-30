@@ -119,26 +119,22 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
   };
   if (loading) {
     return (
-      <Content>
-        <InfoCard
-          title="Issues"
-          deepLink={{ title: "Retrieving Vulnerabilities from Snyk", link: "" }}
-        >
-          <SnykCircularCounter issuesCount={issuesCount} />
-          <Progress />
-        </InfoCard>
-      </Content>
+      <InfoCard
+        title="Issues"
+        deepLink={{ title: "Retrieving Vulnerabilities from Snyk", link: "" }}
+      >
+        <SnykCircularCounter issuesCount={issuesCount} />
+        <Progress />
+      </InfoCard>
     );
   } else if (error) {
     return (
-      <Content>
-        <InfoCard
-          title="Vulnerabilities"
-          deepLink={{ title: "Error", link: "" }}
-        >
-          <Alert severity="error">{error?.message}</Alert>
-        </InfoCard>
-      </Content>
+      <InfoCard
+        title="Vulnerabilities"
+        deepLink={{ title: "Error", link: "" }}
+      >
+        <Alert severity="error">{error?.message}</Alert>
+      </InfoCard>
     );
   }
 
