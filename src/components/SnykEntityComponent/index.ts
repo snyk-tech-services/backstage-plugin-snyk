@@ -4,7 +4,7 @@ import {
   SNYK_ANNOTATION_TARGETID,
   SNYK_ANNOTATION_TARGETNAME,
   SNYK_ANNOTATION_TARGETS,
-  SNYK_ANNOTATION_PROJECTIDS
+  SNYK_ANNOTATION_PROJECTIDS,
 } from "../../config";
 
 export { SnykEntityComponent } from "./SnykEntityComponent";

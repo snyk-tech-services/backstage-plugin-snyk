@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import * as depgraph from "@snyk/dep-graph";
 import { SnykCircularDepCounter } from "./SnykCircularDepCountersComponent";
 import { DepgraphGetResponseType } from "../../../types/types";
-import { depCount } from "../../../types/types";
+import { DepCount as depCountType } from "../../../types/types";
 import { Grid } from "@material-ui/core";
 import { InfoCard } from "@backstage/core-components";
 
@@ -21,16 +21,21 @@ export const DepGraphInfo: FC<DepGraphProps> = ({ depGraph }) => {
     .filter((node) => !directDeps.map((x) => x.nodeId).includes(node.nodeId));
   const directCount = directDeps.length;
   const indirectCount = indirectDeps.length;
-  const totalCount = snykGraph.getPkgs().length - 1; //not counting rootPkg
+  const totalCount = snykGraph.getPkgs().length - 1; // not counting rootPkg
 
-  const depCount: depCount = {
+  const depCount: depCountType = {
     directCount: directCount,
     indirectCount: indirectCount,
     totalCount: totalCount,
   };
   return (
     <InfoCard>
-      <Grid container spacing={2} justifyContent="space-between" direction="column">
+      <Grid
+        container
+        spacing={2}
+        justifyContent="space-between"
+        direction="column"
+      >
         <Grid item>
           Total Dependency count = {totalCount}
           <br />

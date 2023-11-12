@@ -4,10 +4,10 @@ import {
   buildStyles,
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { depCount } from "../../../types/types";
+import { DepCount } from "../../../types/types";
 
 export type SnykCircularDepCounterProps = {
-  depCount: depCount;
+  depCount: DepCount;
 };
 export const SnykCircularDepCounter: FC<SnykCircularDepCounterProps> = (
   depCount
