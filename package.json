@@ -37,6 +37,7 @@
     "snyk": "^1.1243.0"
   },
   "peerDependencies": {
+    "@material-ui/core": "^4.12.2",
     "react": "^16.13.1 || ^17.0.0",
     "react-dom": "^16.13.1 || ^17.0.0",
     "react-router-dom": "^6.18.0"

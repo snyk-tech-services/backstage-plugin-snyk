@@ -18,6 +18,7 @@ yarn link --cwd node_modules/react
 yarn link --cwd node_modules/react-dom
 yarn link --cwd node_modules/react-router-dom
 yarn link --cwd node_modules/react-router
+yarn link --cwd node_modules/@material-ui/core
 
 # Go to the root of the plugin repository
 sh yarn-links.sh
