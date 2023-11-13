@@ -111,7 +111,7 @@ snyk:
   apiVersion: 2023-11-06
   # Mocks the API calls, useful for development and for testing the plugin without a Snyk account. Defaults to "false"
   mocked: false
-  # Will show the Snyk tab in the entity page. Defaults to "false"
+  # Will show resolved issues in all the graphs. Defaults to "false" to show only non-resolved issues
   showResolvedInGraphs: false
 ```
 
@@ -157,7 +157,7 @@ spec:
 
 Some more examples can be found in [here](https://github.com/snyk-tech-services/backstage-plugin-snyk/tree/develop/test/fixtures)
 
-## Migration steps from version 1.x to 2.x
+## Migration steps from plugin version 1.x to 2.x
 
 - Update the proxy target to not contain /v1
 
