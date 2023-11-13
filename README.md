@@ -91,16 +91,16 @@ const ServiceEntityPage = (
 
 ```yaml
 proxy:
-  ...
-
-  '/snyk':
-    # Host of the API to use on the calls.
-    # If you use EU or AU Snyk account, change this to https://api.eu.snyk.io/ or https://api.au.snyk.io/
-    target: https://api.snyk.io/
-    headers:
-      User-Agent: tech-services/backstage-plugin/1.0
-      Authorization: token ${SNYK_TOKEN}
-  ...
+  endpoints:
+    ...
+    /snyk:
+      # Host of the API to use on the calls.
+      # If you use EU or AU Snyk account, change this to https://api.eu.snyk.io/ or https://api.au.snyk.io/
+      target: https://api.snyk.io/
+      headers:
+        User-Agent: tech-services/backstage-plugin/1.0
+        Authorization: token ${SNYK_TOKEN}
+    ...
 ```
 
 You can also add the following optional configuration to your app-config.yaml

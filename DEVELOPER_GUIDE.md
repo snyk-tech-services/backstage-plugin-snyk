@@ -43,11 +43,12 @@ yarn build --watch
 
 ```yaml
 proxy:
-  "/snyk":
-    target: https://api.snyk.io/
-    headers:
-      User-Agent: tech-services/backstage-plugin/1.0
-      Authorization: token ${SNYK_TOKEN}
+  endpoints:
+    /snyk:
+      target: https://api.snyk.io/
+      headers:
+        User-Agent: tech-services/backstage-plugin/1.0
+        Authorization: token ${SNYK_TOKEN}
 snyk:
   # Set to "false" to use the real API
   mocked: true
