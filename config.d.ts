@@ -19,7 +19,7 @@ export interface Config {
     /**
      * @visibility frontend
      */
-    apiHost?: string;
+    appHost?: string;
     /**
      * @visibility frontend
      */

@@ -92,7 +92,7 @@ export const generateSnykTabForProject = (
     };
     const linkInfo = {
       title: "More details",
-      link: `https://${snykApi.getSnykApiHost()}/org/${orgSlug}/project/${projectId}`,
+      link: `https://${snykApi.getSnykAppHost()}/org/${orgSlug}/project/${projectId}`,
     };
     if (value.depGraph) {
       return (

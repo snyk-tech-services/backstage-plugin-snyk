@@ -61,7 +61,7 @@ export interface SnykApi {
     annotations: Record<string, string>
   ): Promise<ProjectsData[]>;
   getDependencyGraph(orgName: string, projectId: string): Promise<any>;
-  getSnykApiHost(): string;
+  getSnykAppHost(): string;
   getSnykApiVersion(): string;
   getOrgSlug(orgId: string): Promise<string>;
   isMocked(): boolean;
@@ -90,9 +90,10 @@ export class SnykApiClient implements SnykApi {
     return `${baseUrl}${this.proxyPathBase}/snyk`;
   }
 
-  getSnykApiHost() {
-    return this.configApi.getOptionalString("snyk.apiHost") ?? "app.snyk.io";
+  getSnykAppHost() {
+    return this.configApi.getOptionalString("snyk.appHost") ?? "app.snyk.io";
   }
+
   isMocked(): boolean {
     return this.configApi.getOptionalBoolean("snyk.mocked") ?? false;
   }
