@@ -162,7 +162,7 @@ export class SnykApiClient implements SnykApi {
     const v3Headers = this.headers;
     const version = this.getSnykApiVersion();
     v3Headers["Content-Type"] = "application/vnd.api+json";
-    const apiUrl = `${backendBaseUrl}/rest/orgs/${orgId}/issues?${version}&scan_item.id=${projectId}&scan_item.type=project&limit=100`;
+    const apiUrl = `${backendBaseUrl}/rest/orgs/${orgId}/issues?version=${version}&scan_item.id=${projectId}&scan_item.type=project&limit=100`;
     const response = await fetch(`${apiUrl}`, {
       method: "GET",
       headers: v3Headers,
