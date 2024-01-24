@@ -6,9 +6,9 @@ import {
   TabbedLayout,
   Link,
 } from "@backstage/core-components";
+import { MissingAnnotationEmptyState } from "@backstage/plugin-catalog-react";
 import { useApi } from "@backstage/core-plugin-api";
 import {
-  MissingAnnotationEmptyState,
   InfoCard,
 } from "@backstage/core-components";
 import { snykApiRef } from "../../api";
@@ -29,12 +29,14 @@ import { useEntity } from "@backstage/plugin-catalog-react";
 import { ProjectsData } from "../../types/projectsTypes";
 import {
   SNYK_ANNOTATION_ORG,
+  SNYK_ANNOTATION_ORGS,
   SNYK_ANNOTATION_TARGETID,
   SNYK_ANNOTATION_TARGETNAME,
 } from "../../config";
 
 type SnykTab = {
   name: string;
+  slug: string;
   icon: any;
   projectId: string;
   tabContent: any;
@@ -110,17 +112,18 @@ export const SnykEntityComponent = () => {
 
   const tabs: Array<SnykTab> = [];
 
-  const orgId = entity?.metadata.annotations?.[SNYK_ANNOTATION_ORG] || "null";
+    const orgIds = entity?.metadata.annotations?.[SNYK_ANNOTATION_ORGS].split(',')
+        || entity?.metadata.annotations?.[SNYK_ANNOTATION_ORG].split(',')
+        || [];
+    const hasMultipleOrgs = orgIds.length > 1;
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { value, loading, error } = useAsync(async () => {
-    const completeProjectsList: ProjectsData[] = entity?.metadata.annotations
-      ? await snykApi.getCompleteProjectsListFromAnnotations(
-          orgId,
-          entity?.metadata.annotations
-        )
-      : [];
-    const orgSlug = await snykApi.getOrgSlug(orgId);
-    return { completeProjectsList, orgSlug };
+    return Promise.all(orgIds.map(async (orgId) => {
+        const projectList: ProjectsData[] = entity?.metadata.annotations ? await snykApi.getCompleteProjectsListFromAnnotations(orgId, entity?.metadata.annotations, hasMultipleOrgs): []
+        const orgSlug = await snykApi.getOrgSlug(orgId);
+        return { projectList, orgSlug, orgId };
+    }));
   });
   if (loading) {
     return (
@@ -129,27 +132,28 @@ export const SnykEntityComponent = () => {
       </Content>
     );
   } else if (error) {
+    // eslint-disable-next-line no-console
     console.log(error);
     return <Alert severity="error">{error.message}</Alert>;
   }
 
-  const projectList = value?.completeProjectsList as ProjectsData[];
-  const orgSlug = value?.orgSlug || "";
-  projectList.forEach((project) => {
-    tabs.push({
-      name: `${utils.extractTargetShortname(
-        project.attributes.name || "unknown"
-      )}`,
-      icon: getIconForProjectType(project.attributes.origin || ""),
-      projectId: project.id,
-      tabContent: generateSnykTabForProject(
-        snykApi,
-        orgId,
-        orgSlug,
-        project.id
-      ),
-      type: project.attributes.type,
-    });
+  value?.forEach(({orgId, orgSlug, projectList}) => {
+    projectList.forEach((project) => {
+      const name = `${utils.extractTargetShortname(project.attributes.name || "unknown")}`;
+      tabs.push({
+        name: name,
+        slug: hasMultipleOrgs ? `${orgSlug}/${name}` : name,
+        icon: getIconForProjectType(project.attributes.origin || ""),
+        projectId: project.id,
+        tabContent: generateSnykTabForProject(
+            snykApi,
+            orgId,
+            orgSlug,
+            project.id
+        ),
+        type: project.attributes.type,
+      });
+    })
   });
 
   const infoCardTitle = `${tabs.length} Project${tabs.length > 1 ? "s" : ""}`;
@@ -161,10 +165,8 @@ export const SnykEntityComponent = () => {
           {tabs.map((tab) => (
             <TabbedLayout.Route
               key={tab.projectId}
-              path={tab.name}
-              title={`(${tab.type}-${tab.projectId.substring(0, 3)}) ${
-                tab.name
-              }`}
+              path={tab.slug}
+              title={`(${tab.type}-${tab.projectId.substring(0,3)}) ${tab.name}`}
             >
               <Content>
                 <tab.tabContent />

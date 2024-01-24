@@ -11,7 +11,7 @@ import { SnykCircularCounter } from "./components/SnykCircularCountersComponent"
 import { IssuesCount as IssuesCountType } from "../../types/types";
 import { useEntity } from "@backstage/plugin-catalog-react";
 import { UnifiedIssues } from "../../types/unifiedIssuesTypes";
-import { SNYK_ANNOTATION_ORG } from "../../config";
+import { SNYK_ANNOTATION_ORG, SNYK_ANNOTATION_ORGS } from "../../config";
 
 export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
   const snykApi = useApi(snykApiRef);
@@ -25,7 +25,7 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
       <Grid
         container
         spacing={2}
-        justify="center"
+        justifyContent="center"
         direction="column"
         alignItems="center"
       >
@@ -50,8 +50,13 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
       </Grid>
     );
   }
-  const orgId = entity?.metadata.annotations?.[SNYK_ANNOTATION_ORG] || "null";
 
+  const orgIds = entity?.metadata.annotations?.[SNYK_ANNOTATION_ORGS].split(',')
+      || entity?.metadata.annotations?.[SNYK_ANNOTATION_ORG].split(',')
+      || [];
+  const hasMultipleOrgs = orgIds.length > 1;
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { value, loading, error } = useAsync(async () => {
     const aggregatedIssuesCount: IssuesCountType = {
       critical: 0,
@@ -59,35 +64,43 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
       medium: 0,
       low: 0,
     };
-    const projectList = entity?.metadata.annotations
-      ? await snykApi.getCompleteProjectsListFromAnnotations(
-          orgId,
-          entity.metadata.annotations
-        )
-      : [];
+    const projectOrgList = await Promise.all(
+      orgIds.map(async (orgId) => {
+          const projectList = entity?.metadata.annotations
+          ? await snykApi.getCompleteProjectsListFromAnnotations(
+            orgId,
+            entity.metadata.annotations,
+            hasMultipleOrgs
+          ) : [];
+          return { projectList, orgId };
+      })
+    );
 
     let projectsCount = 0;
 
-    const projectIds = projectList.map((project) => project.id);
+    const allProjects = projectOrgList.flatMap(({ projectList }) => projectList);
+    const projectOrgMap = projectOrgList.reduce((acc, { orgId, projectList }) => {
+      projectList.forEach(project => {
+        acc[project.id] = orgId;
+      });
+      return acc;
+    }, {} as { [key: string]: string });
+    const projectIds = allProjects.map((project) => project.id);
+
     for (let i = 0; i < projectIds.length; i++) {
-      if (
-        projectList?.some(
-          (selectedProject) => selectedProject.id === projectIds[i]
-        )
-      ) {
+      const projectId = projectIds[i];
+      if (allProjects?.some((selectedProject) => selectedProject.id === projectId)) {
         projectsCount++;
 
-        const vulnsIssues: UnifiedIssues =
-          await snykApi.listAllAggregatedIssues(orgId, projectIds[i]);
-        const currentProjectIssuesCount = snykApi.getIssuesCount(
-          vulnsIssues.data
-        );
+        const vulnsIssues: UnifiedIssues = await snykApi.listAllAggregatedIssues(projectOrgMap[projectId], projectId);
+        const currentProjectIssuesCount = snykApi.getIssuesCount(vulnsIssues.data);
         aggregatedIssuesCount.critical += currentProjectIssuesCount.critical;
         aggregatedIssuesCount.high += currentProjectIssuesCount.high;
         aggregatedIssuesCount.medium += currentProjectIssuesCount.medium;
         aggregatedIssuesCount.low += currentProjectIssuesCount.low;
       }
     }
+
     return { aggregatedIssuesCount, projectsCount };
   });
 

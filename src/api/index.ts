@@ -30,6 +30,7 @@ import {
   SNYK_ANNOTATION_PROJECTIDS,
   SNYK_ANNOTATION_EXCLUDE_PROJECTIDS,
   SNYK_ANNOTATION_ORG,
+  SNYK_ANNOTATION_ORGS,
 } from "../config";
 import { mockedProjects } from "../utils/mockedProjects";
 import { mockedIssues } from "../utils/mockedIssues";
@@ -58,7 +59,8 @@ export interface SnykApi {
   getProjectDetails(orgName: string, projectId: string): Promise<any>;
   getCompleteProjectsListFromAnnotations(
     orgId: string,
-    annotations: Record<string, string>
+    annotations: Record<string, string>,
+    ignoreMissingTargets: boolean
   ): Promise<ProjectsData[]>;
   getDependencyGraph(orgName: string, projectId: string): Promise<any>;
   getSnykAppHost(): string;
@@ -117,11 +119,15 @@ export class SnykApiClient implements SnykApi {
   isAvailableInEntity(entity: Entity): boolean {
     return (
       this.isMocked() ||
-      (Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_ORG]) &&
-        (Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETNAME]) ||
+      (
+          Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_ORG]) ||
+          Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_ORGS])
+      ) && (
+          Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETNAME]) ||
           Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETID]) ||
           Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETS]) ||
-          Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_PROJECTIDS])))
+          Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_PROJECTIDS])
+      )
     );
   }
 
@@ -228,7 +234,8 @@ export class SnykApiClient implements SnykApi {
 
   async getCompleteProjectsListFromAnnotations(
     orgId: string,
-    annotations: Record<string, string>
+    annotations: Record<string, string>,
+    ignoreMissingTargets = false
   ): Promise<ProjectsData[]> {
     let completeProjectsList: ProjectsData[] = [];
 
@@ -248,7 +255,8 @@ export class SnykApiClient implements SnykApi {
     if (targetsArray.length > 0) {
       const fullProjectByTargetList = await this.getProjectsListByTargets(
         orgId,
-        Array.isArray(targetsArray) ? targetsArray : [...targetsArray]
+        Array.isArray(targetsArray) ? targetsArray : [...targetsArray],
+        ignoreMissingTargets
       );
       completeProjectsList.push(...fullProjectByTargetList);
     }
@@ -278,13 +286,18 @@ export class SnykApiClient implements SnykApi {
 
   async getProjectsListByTargets(
     orgId: string,
-    repoName: string[]
+    repoName: string[],
+    ignoreMissing = false
   ): Promise<ProjectsData[]> {
     const TargetIdsArray: string[] = [];
     for (let i = 0; i < repoName.length; i++) {
-      TargetIdsArray.push(
-        `target_id=${await this.getTargetId(orgId, repoName[i])}`
-      );
+        try {
+            TargetIdsArray.push(
+                `target_id=${await this.getTargetId(orgId, repoName[i])}`
+            );
+        } catch (e) {
+            if (!ignoreMissing) throw e
+        }
     }
     const backendBaseUrl = await this.getApiUrl();
     const v3Headers = this.headers;
