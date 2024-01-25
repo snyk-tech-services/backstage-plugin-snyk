@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import {
   CircularProgressbarWithChildren,
-  CircularProgressbar,
   buildStyles,
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
@@ -173,7 +172,7 @@ export const SnykCircularCounter: FC<SnykCircularCounterProps> = ({
               })}
             >
               <div style={{ width: "88%" }}>
-                <CircularProgressbar
+                <CircularProgressbarWithChildren
                   value={lines[3].value}
                   circleRatio={2 / 3}
                   styles={buildStyles({

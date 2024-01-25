@@ -91,7 +91,10 @@ export class SnykApiClient implements SnykApi {
   }
 
   getSnykAppHost() {
-    return this.configApi.getOptionalString("snyk.appHost") ?? "app.snyk.io";
+    const appHost =
+      this.configApi.getOptionalString("snyk.AppHost") ??
+      this.configApi.getOptionalString("snyk.appHost");
+    return appHost ?? "app.snyk.io";
   }
 
   isMocked(): boolean {
@@ -105,7 +108,10 @@ export class SnykApiClient implements SnykApi {
   }
 
   getSnykApiVersion(): string {
-    return this.configApi.getOptionalString("snyk.apiVersion") ?? "2023-11-06";
+    return (
+      this.configApi.getOptionalString("snyk.apiVersion") ??
+      "2023-06-19~experimental"
+    );
   }
 
   isAvailableInEntity(entity: Entity): boolean {

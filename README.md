@@ -110,7 +110,7 @@ snyk:
   # Host of the Web UI to render links. Defaults to "app.snyk.io"
   # If you use EU or AU Snyk account, change this to app.eu.snyk.io or app.au.snyk.io
   appHost: app.snyk.io
-  # Version of the API to use on the calls. Defaults to "2023-11-06"
+  # Version of the API to use on the calls. Defaults to "2023-06-19~experimental"
   apiVersion: 2023-11-06
   # Mocks the API calls, useful for development and for testing the plugin without a Snyk account. Defaults to "false"
   mocked: false

@@ -23,6 +23,10 @@ export interface Config {
     /**
      * @visibility frontend
      */
+    AppHost?: string; // kept for backward compatibility
+    /**
+     * @visibility frontend
+     */
     apiVersion?: string;
     /**
      * @visibility frontend
