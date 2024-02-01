@@ -20,9 +20,9 @@ import {
   createApiRef,
   DiscoveryApi,
 } from "@backstage/core-plugin-api";
-import { TargetData } from "../types/targetsTypes";
-import { OrgData } from "../types/orgsTypes";
-import { ProjectsData } from "../types/projectsTypes";
+import {TargetData} from "../types/targetsTypes";
+import {OrgData} from "../types/orgsTypes";
+import {ProjectsData} from "../types/projectsTypes";
 import {
   SNYK_ANNOTATION_TARGETID,
   SNYK_ANNOTATION_TARGETNAME,
@@ -32,13 +32,13 @@ import {
   SNYK_ANNOTATION_ORG,
   SNYK_ANNOTATION_ORGS,
 } from "../config";
-import { mockedProjects } from "../utils/mockedProjects";
-import { mockedIssues } from "../utils/mockedIssues";
-import { Entity } from "@backstage/catalog-model";
-import { mockedDepGraphs } from "../utils/mockedDepGraphs";
-import { mockedProjectDetails } from "../utils/mockedProjectDetails";
-import { IssuesCount } from "../types/types";
-import { Issue } from "../types/unifiedIssuesTypes";
+import {mockedProjects} from "../utils/mockedProjects";
+import {mockedIssues} from "../utils/mockedIssues";
+import {Entity} from "@backstage/catalog-model";
+import {mockedDepGraphs} from "../utils/mockedDepGraphs";
+import {mockedProjectDetails} from "../utils/mockedProjectDetails";
+import {IssuesCount} from "../types/types";
+import {Issue} from "../types/unifiedIssuesTypes";
 
 const DEFAULT_PROXY_PATH_BASE = "";
 
@@ -56,19 +56,29 @@ export const snykApiRef: ApiRef<SnykApi> = createApiRef<SnykApi>({
 
 export interface SnykApi {
   listAllAggregatedIssues(orgName: string, projectId: string): Promise<any>;
+
   getProjectDetails(orgName: string, projectId: string): Promise<any>;
+
   getCompleteProjectsListFromAnnotations(
     orgId: string,
     annotations: Record<string, string>,
     ignoreMissingTargets: boolean
   ): Promise<ProjectsData[]>;
+
   getDependencyGraph(orgName: string, projectId: string): Promise<any>;
+
   getSnykAppHost(): string;
+
   getSnykApiVersion(): string;
+
   getOrgSlug(orgId: string): Promise<string>;
+
   isMocked(): boolean;
+
   isAvailableInEntity(entity: Entity): boolean;
+
   isShowResolvedInGraphs(entity: Entity): boolean;
+
   getIssuesCount(issues: Array<Issue>): IssuesCount;
 }
 
@@ -81,6 +91,7 @@ export class SnykApiClient implements SnykApi {
     "Content-Type": "application/json",
     "User-Agent": "tech-services/backstage-plugin/1.0",
   };
+
   constructor(options: Options) {
     this.discoveryApi = options.discoveryApi;
     this.configApi = options.configApi;
@@ -120,13 +131,13 @@ export class SnykApiClient implements SnykApi {
     return (
       this.isMocked() ||
       (
-          Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_ORG]) ||
-          Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_ORGS])
+        Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_ORG]) ||
+        Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_ORGS])
       ) && (
-          Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETNAME]) ||
-          Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETID]) ||
-          Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETS]) ||
-          Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_PROJECTIDS])
+        Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETNAME]) ||
+        Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETID]) ||
+        Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETS]) ||
+        Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_PROJECTIDS])
       )
     );
   }
@@ -291,13 +302,13 @@ export class SnykApiClient implements SnykApi {
   ): Promise<ProjectsData[]> {
     const TargetIdsArray: string[] = [];
     for (let i = 0; i < repoName.length; i++) {
-        try {
-            TargetIdsArray.push(
-                `target_id=${await this.getTargetId(orgId, repoName[i])}`
-            );
-        } catch (e) {
-            if (!ignoreMissing) throw e
-        }
+      try {
+        TargetIdsArray.push(
+          `target_id=${await this.getTargetId(orgId, repoName[i])}`
+        );
+      } catch (e) {
+        if (!ignoreMissing) throw e
+      }
     }
     const backendBaseUrl = await this.getApiUrl();
     const v3Headers = this.headers;

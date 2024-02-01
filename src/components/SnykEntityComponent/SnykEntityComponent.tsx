@@ -6,16 +6,16 @@ import {
   TabbedLayout,
   Link,
 } from "@backstage/core-components";
-import { MissingAnnotationEmptyState } from "@backstage/plugin-catalog-react";
-import { useApi } from "@backstage/core-plugin-api";
+import {MissingAnnotationEmptyState} from "@backstage/plugin-catalog-react";
+import {useApi} from "@backstage/core-plugin-api";
 import {
   InfoCard,
 } from "@backstage/core-components";
-import { snykApiRef } from "../../api";
-import { useAsync } from "react-use";
-import { Alert } from "@material-ui/lab";
+import {snykApiRef} from "../../api";
+import {useAsync} from "react-use";
+import {Alert} from "@material-ui/lab";
 import * as utils from "../../utils/utils";
-import { generateSnykTabForProject } from "./SnykTab";
+import {generateSnykTabForProject} from "./SnykTab";
 import GitHubIcon from "@material-ui/icons/GitHub";
 
 import {
@@ -25,8 +25,8 @@ import {
   mdiMicrosoftAzureDevops,
   mdiLambda,
 } from "./svgs";
-import { useEntity } from "@backstage/plugin-catalog-react";
-import { ProjectsData } from "../../types/projectsTypes";
+import {useEntity} from "@backstage/plugin-catalog-react";
+import {ProjectsData} from "../../types/projectsTypes";
 import {
   SNYK_ANNOTATION_ORG,
   SNYK_ANNOTATION_ORGS,
@@ -52,7 +52,7 @@ function svgComponent(componentSVG: string) {
       }}
       viewBox="0 0 24 24"
     >
-      <path fill="currentColor" d={componentSVG} />
+      <path fill="currentColor" d={componentSVG}/>
     </svg>
   );
 }
@@ -60,7 +60,7 @@ function svgComponent(componentSVG: string) {
 const getIconForProjectType = (projectOrigin: string) => {
   switch (projectOrigin) {
     case "github":
-      return <GitHubIcon />;
+      return <GitHubIcon/>;
     case "cli":
       return svgComponent(mdiConsole);
     case "gitlab":
@@ -77,13 +77,13 @@ const getIconForProjectType = (projectOrigin: string) => {
 };
 
 export const SnykEntityComponent = () => {
-  const { entity } = useEntity();
+  const {entity} = useEntity();
 
   const snykApi = useApi(snykApiRef);
   if (!entity || !entity?.metadata.name) {
     return <>No Snyk org/project-ids listed</>;
   }
-  const containerStyle = { width: "60%", padding: "20px" };
+  const containerStyle = {width: "60%", padding: "20px"};
   if (!snykApi.isAvailableInEntity(entity)) {
     const version = snykApi.getSnykApiVersion();
     return (
@@ -112,23 +112,23 @@ export const SnykEntityComponent = () => {
 
   const tabs: Array<SnykTab> = [];
 
-    const orgIds = entity?.metadata.annotations?.[SNYK_ANNOTATION_ORGS].split(',')
-        || entity?.metadata.annotations?.[SNYK_ANNOTATION_ORG].split(',')
-        || [];
-    const hasMultipleOrgs = orgIds.length > 1;
+  const orgIds = entity?.metadata.annotations?.[SNYK_ANNOTATION_ORGS].split(',')
+    || entity?.metadata.annotations?.[SNYK_ANNOTATION_ORG].split(',')
+    || [];
+  const hasMultipleOrgs = orgIds.length > 1;
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { value, loading, error } = useAsync(async () => {
+  const {value, loading, error} = useAsync(async () => {
     return Promise.all(orgIds.map(async (orgId) => {
-        const projectList: ProjectsData[] = entity?.metadata.annotations ? await snykApi.getCompleteProjectsListFromAnnotations(orgId, entity?.metadata.annotations, hasMultipleOrgs): []
-        const orgSlug = await snykApi.getOrgSlug(orgId);
-        return { projectList, orgSlug, orgId };
+      const projectList: ProjectsData[] = entity?.metadata.annotations ? await snykApi.getCompleteProjectsListFromAnnotations(orgId, entity?.metadata.annotations, hasMultipleOrgs) : []
+      const orgSlug = await snykApi.getOrgSlug(orgId);
+      return {projectList, orgSlug, orgId};
     }));
   });
   if (loading) {
     return (
       <Content>
-        <Progress />
+        <Progress/>
       </Content>
     );
   } else if (error) {
@@ -146,10 +146,10 @@ export const SnykEntityComponent = () => {
         icon: getIconForProjectType(project.attributes.origin || ""),
         projectId: project.id,
         tabContent: generateSnykTabForProject(
-            snykApi,
-            orgId,
-            orgSlug,
-            project.id
+          snykApi,
+          orgId,
+          orgSlug,
+          project.id
         ),
         type: project.attributes.type,
       });
@@ -166,10 +166,10 @@ export const SnykEntityComponent = () => {
             <TabbedLayout.Route
               key={tab.projectId}
               path={tab.slug}
-              title={`(${tab.type}-${tab.projectId.substring(0,3)}) ${tab.name}`}
+              title={`(${tab.type}-${tab.projectId.substring(0, 3)}) ${tab.name}`}
             >
               <Content>
-                <tab.tabContent />
+                <tab.tabContent/>
               </Content>
             </TabbedLayout.Route>
           ))}
