@@ -1,34 +1,140 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import {
   CircularProgressbarWithChildren,
-  CircularProgressbar,
   buildStyles,
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { issuesCount } from "../../../types/types";
+import { IssuesCount } from "../../../types/types";
 
 export type SnykCircularCounterProps = {
-  issuesCount: issuesCount;
+  issuesCount: IssuesCount;
+  loading: boolean;
 };
-export const SnykCircularCounter: FC<SnykCircularCounterProps> = (
-  issuesCount
-) => {
-  const criticalSevCount = issuesCount.issuesCount.critical;
-  const highSevCount = issuesCount.issuesCount.high;
-  const mediumSevCount = issuesCount.issuesCount.medium;
-  const lowSevCount = issuesCount.issuesCount.low;
+export const SnykCircularCounter: FC<SnykCircularCounterProps> = ({
+  issuesCount,
+  loading,
+}) => {
+  const criticalSevCount = issuesCount.critical;
+  const highSevCount = issuesCount.high;
+  const mediumSevCount = issuesCount.medium;
+  const lowSevCount = issuesCount.low;
   const total = criticalSevCount + highSevCount + mediumSevCount + lowSevCount;
 
+  const [lines, setLines] = useState([
+    {
+      color: `rgb(${Math.floor(Math.random() * 256)}, 0, ${Math.floor(
+        128 + Math.random() * 128
+      )})`,
+      value: Math.floor(Math.random() * 10),
+    },
+    {
+      color: `rgb(${Math.floor(Math.random() * 256)}, 0, ${Math.floor(
+        128 + Math.random() * 128
+      )})`,
+      value: Math.floor(Math.random() * 10),
+    },
+    {
+      color: `rgb(${Math.floor(Math.random() * 256)}, 0, ${Math.floor(
+        128 + Math.random() * 128
+      )})`,
+      value: Math.floor(Math.random() * 10),
+    },
+    {
+      color: `rgb(${Math.floor(Math.random() * 256)}, 0, ${Math.floor(
+        128 + Math.random() * 128
+      )})`,
+      value: Math.floor(Math.random() * 10),
+    },
+  ]);
+
+  const intervalId = useRef<NodeJS.Timeout | null>(null);
+
+  // In seconds
+  const transitionDuration = 1;
+
+  useEffect(() => {
+    if (loading) {
+      intervalId.current = setInterval(() => {
+        setLines((allLines) =>
+          allLines.map((line) => ({
+            // Random color between blue and purple
+            color: `rgb(${Math.floor(Math.random() * 256)}, 0, ${Math.floor(
+              128 + Math.random() * 128
+            )})`,
+            // Increase/decrease value by a random amount between 20 and -20, no more than 50 and no less than 0
+            value: Math.max(
+              0,
+              Math.min(50, line.value + Math.floor(Math.random() * 40) - 10)
+            ),
+          }))
+        );
+      }, transitionDuration * 1000);
+    } else {
+      setLines((allLines) =>
+        allLines.map((line: { color: string; value: number }) => ({
+          ...line,
+        }))
+      );
+      if (intervalId.current) {
+        clearInterval(intervalId.current);
+        intervalId.current = null;
+      }
+    }
+
+    return () => {
+      if (intervalId.current) {
+        clearInterval(intervalId.current);
+        intervalId.current = null;
+      }
+    };
+  }, [loading]);
+
+  useEffect(() => {
+    // Cleanup function to clear the interval
+    return () => {
+      if (intervalId) {
+        if (intervalId.current) {
+          clearInterval(intervalId.current);
+          intervalId.current = null;
+        }
+      }
+    };
+  }, []);
+
+  if (!loading) {
+    if (total === 0) {
+      lines[0].value = 100;
+      lines[1].value = 100;
+      lines[2].value = 100;
+      lines[3].value = 100;
+      lines[0].color = "#00ff00";
+      lines[1].color = "#44ff44";
+      lines[2].color = "#88ff88";
+      lines[3].color = "#bbffbb";
+    } else {
+      lines[0].value = (criticalSevCount * 100) / total;
+      lines[1].value = (highSevCount * 100) / total;
+      lines[2].value = (mediumSevCount * 100) / total;
+      lines[3].value = (lowSevCount * 100) / total;
+      lines[0].color = "#f00";
+      lines[1].color = "orange";
+      lines[2].color = "yellow";
+      lines[3].color = "#dcff00";
+    }
+  }
   return (
     <CircularProgressbarWithChildren
-      value={total > 0 ? (criticalSevCount * 100) / total : 100}
+      value={lines[0].value}
       strokeWidth={6}
       circleRatio={2 / 3}
       styles={buildStyles({
-        pathTransitionDuration: 0.5,
+        pathTransitionDuration: transitionDuration,
         strokeLinecap: "butt",
-        pathColor: total > 0 ? "#f00" : "#ABEBC6",
+        pathColor: lines[0].color,
         trailColor: "#eee",
+        pathTransition:
+          "stroke-dashoffset 1s ease-in-out, stroke 1s ease-in-out",
+
         rotation: -1 / 3,
       })}
     >
@@ -38,37 +144,43 @@ export const SnykCircularCounter: FC<SnykCircularCounterProps> = (
             */}
       <div style={{ width: "88%" }}>
         <CircularProgressbarWithChildren
-          value={total > 0 ? (highSevCount * 100) / total : 100}
+          value={lines[1].value}
           circleRatio={2 / 3}
           strokeWidth={6}
           styles={buildStyles({
-            pathTransitionDuration: 0.5,
+            pathTransition:
+              "stroke-dashoffset 1s ease-in-out, stroke 1s ease-in-out",
+            pathTransitionDuration: transitionDuration,
             strokeLinecap: "butt",
-            pathColor: total > 0 ? "orange" : "#ABEBC6",
+            pathColor: lines[1].color,
             trailColor: "#eee",
             rotation: -1 / 3,
           })}
         >
           <div style={{ width: "88%" }}>
             <CircularProgressbarWithChildren
-              value={total > 0 ? (mediumSevCount * 100) / total : 100}
+              value={lines[2].value}
               circleRatio={2 / 3}
               styles={buildStyles({
-                pathTransitionDuration: 0.5,
+                pathTransition:
+                  "stroke-dashoffset 1s ease-in-out, stroke 1s ease-in-out",
+                pathTransitionDuration: transitionDuration,
                 strokeLinecap: "butt",
-                pathColor: total > 0 ? "yellow" : "#ABEBC6",
+                pathColor: lines[2].color,
                 trailColor: "#eee",
                 rotation: -1 / 3,
               })}
             >
               <div style={{ width: "88%" }}>
-                <CircularProgressbar
-                  value={total > 0 ? (lowSevCount * 100) / total : 100}
+                <CircularProgressbarWithChildren
+                  value={lines[3].value}
                   circleRatio={2 / 3}
                   styles={buildStyles({
-                    pathTransitionDuration: 0.5,
+                    pathTransition:
+                      "stroke-dashoffset 1s ease-in-out, stroke 1s ease-in-out",
+                    pathTransitionDuration: transitionDuration,
                     strokeLinecap: "butt",
-                    pathColor: total > 0 ? "yellow" : "#ABEBC6",
+                    pathColor: lines[3].color,
                     trailColor: "#eee",
                     rotation: -1 / 3,
                   })}
@@ -76,7 +188,6 @@ export const SnykCircularCounter: FC<SnykCircularCounterProps> = (
                 <div
                   style={{
                     position: "absolute",
-                    fontSize: "90%",
                     marginTop: "-30%",
                     marginLeft: "35%",
                   }}

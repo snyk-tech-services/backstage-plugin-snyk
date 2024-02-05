@@ -6,16 +6,16 @@ import {
   TabbedLayout,
   Link,
 } from "@backstage/core-components";
-import { useApi } from "@backstage/core-plugin-api";
+import {MissingAnnotationEmptyState} from "@backstage/plugin-catalog-react";
+import {useApi} from "@backstage/core-plugin-api";
 import {
-  MissingAnnotationEmptyState,
   InfoCard,
 } from "@backstage/core-components";
-import { snykApiRef } from "../../api";
-import { useAsync } from "react-use";
-import { Alert } from "@material-ui/lab";
+import {snykApiRef} from "../../api";
+import {useAsync} from "react-use";
+import {Alert} from "@material-ui/lab";
 import * as utils from "../../utils/utils";
-import { generateSnykTabForProject } from "./snykTab";
+import {generateSnykTabForProject} from "./SnykTab";
 import GitHubIcon from "@material-ui/icons/GitHub";
 
 import {
@@ -25,25 +25,25 @@ import {
   mdiMicrosoftAzureDevops,
   mdiLambda,
 } from "./svgs";
-import { useEntity } from "@backstage/plugin-catalog-react";
-import { ProjectsData } from "../../types/projectsTypes";
+import {useEntity} from "@backstage/plugin-catalog-react";
+import {ProjectsData} from "../../types/projectsTypes";
 import {
   SNYK_ANNOTATION_ORG,
+  SNYK_ANNOTATION_ORGS,
   SNYK_ANNOTATION_TARGETID,
   SNYK_ANNOTATION_TARGETNAME,
-  SNYK_ANNOTATION_PROJECTIDS,
-  SNYK_ANNOTATION_TARGETS,
 } from "../../config";
 
 type SnykTab = {
   name: string;
+  slug: string;
   icon: any;
-  projectId: string,
+  projectId: string;
   tabContent: any;
   type: string;
 };
 
-function SvgComponent(componentSVG: string) {
+function svgComponent(componentSVG: string) {
   return (
     <svg
       style={{
@@ -52,7 +52,7 @@ function SvgComponent(componentSVG: string) {
       }}
       viewBox="0 0 24 24"
     >
-      <path fill="currentColor" d={componentSVG} />
+      <path fill="currentColor" d={componentSVG}/>
     </svg>
   );
 }
@@ -60,39 +60,32 @@ function SvgComponent(componentSVG: string) {
 const getIconForProjectType = (projectOrigin: string) => {
   switch (projectOrigin) {
     case "github":
-      return <GitHubIcon />;
+      return <GitHubIcon/>;
     case "cli":
-      return SvgComponent(mdiConsole);
+      return svgComponent(mdiConsole);
     case "gitlab":
-      return SvgComponent(mdiGitlab);
+      return svgComponent(mdiGitlab);
     case "bitbucket":
-      return SvgComponent(mdiBitbucket);
+      return svgComponent(mdiBitbucket);
     case "azure-repos":
-      return SvgComponent(mdiMicrosoftAzureDevops);
+      return svgComponent(mdiMicrosoftAzureDevops);
     case "aws-lambda":
-      return SvgComponent(mdiLambda);
+      return svgComponent(mdiLambda);
     default:
       return <> </>;
   }
 };
 
 export const SnykEntityComponent = () => {
-  const { entity } = useEntity();
+  const {entity} = useEntity();
+
+  const snykApi = useApi(snykApiRef);
   if (!entity || !entity?.metadata.name) {
     return <>No Snyk org/project-ids listed</>;
   }
-  const containerStyle = { width: "60%", padding: "20px" };
-  if (
-    !entity ||
-    !entity?.metadata.annotations ||
-    !entity?.metadata.annotations[SNYK_ANNOTATION_ORG] ||
-    !(
-      entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETNAME] ||
-      entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETID] ||
-      entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETS] ||
-      entity.metadata.annotations?.[SNYK_ANNOTATION_PROJECTIDS]
-    )
-  ) {
+  const containerStyle = {width: "60%", padding: "20px"};
+  if (!snykApi.isAvailableInEntity(entity)) {
+    const version = snykApi.getSnykApiVersion();
     return (
       <Content>
         <div style={containerStyle}>
@@ -102,9 +95,7 @@ export const SnykEntityComponent = () => {
         </div>
         or alternatively using the target name or ID (you can retrieve using the{" "}
         <Link
-          to={
-            "https://apidocs.snyk.io/?version=2023-06-19%7Ebeta#get-/orgs/-org_id-/targets"
-          }
+          to={`https://apidocs.snyk.io/?version=${version}%7Ebeta#get-/orgs/-org_id-/targets`}
         >
           Targets endpoint)
         </Link>{" "}
@@ -121,40 +112,48 @@ export const SnykEntityComponent = () => {
 
   const tabs: Array<SnykTab> = [];
 
-  const snykApi = useApi(snykApiRef);
-  const orgId = entity?.metadata.annotations?.[SNYK_ANNOTATION_ORG] || "null";
+  const orgIds = entity?.metadata.annotations?.[SNYK_ANNOTATION_ORGS]?.split(',')
+    || entity?.metadata.annotations?.[SNYK_ANNOTATION_ORG]?.split(',')
+    || [];
+  const hasMultipleOrgs = orgIds.length > 1;
 
-  const { value, loading, error } = useAsync(async () => {
-    const completeProjectsList: ProjectsData[] = entity?.metadata.annotations ? await snykApi.GetCompleteProjectsListFromAnnotations(orgId,entity?.metadata.annotations): []
-    const orgSlug = await snykApi.GetOrgSlug(orgId);
-    return { completeProjectsList, orgSlug };
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const {value, loading, error} = useAsync(async () => {
+    return Promise.all(orgIds.map(async (orgId) => {
+      const projectList: ProjectsData[] = entity?.metadata.annotations ? await snykApi.getCompleteProjectsListFromAnnotations(orgId, entity?.metadata.annotations, hasMultipleOrgs) : []
+      const orgSlug = await snykApi.getOrgSlug(orgId);
+      return {projectList, orgSlug, orgId};
+    }));
   });
   if (loading) {
     return (
       <Content>
-        <Progress />
+        <Progress/>
       </Content>
     );
   } else if (error) {
+    // eslint-disable-next-line no-console
     console.log(error);
     return <Alert severity="error">{error.message}</Alert>;
   }
 
-  const projectList = value?.completeProjectsList as ProjectsData[];
-  const orgSlug = value?.orgSlug || "";
-  projectList.forEach((project) => {
-    tabs.push({
-      name: `${utils.extractTargetShortname(project.attributes.name || "unknown")}`,
-      icon: getIconForProjectType(project.attributes.origin || ""),
-      projectId: project.id,
-      tabContent: generateSnykTabForProject(
-        snykApi,
-        orgId,
-        orgSlug,
-        project.id
-      ),
-      type: project.attributes.type,
-    });
+  value?.forEach(({orgId, orgSlug, projectList}) => {
+    projectList.forEach((project) => {
+      const name = `${utils.extractTargetShortname(project.attributes.name || "unknown")}`;
+      tabs.push({
+        name: name,
+        slug: hasMultipleOrgs ? `${orgSlug}/${name}` : name,
+        icon: getIconForProjectType(project.attributes.origin || ""),
+        projectId: project.id,
+        tabContent: generateSnykTabForProject(
+          snykApi,
+          orgId,
+          orgSlug,
+          project.id
+        ),
+        type: project.attributes.type,
+      });
+    })
   });
 
   const infoCardTitle = `${tabs.length} Project${tabs.length > 1 ? "s" : ""}`;
@@ -166,11 +165,11 @@ export const SnykEntityComponent = () => {
           {tabs.map((tab) => (
             <TabbedLayout.Route
               key={tab.projectId}
-              path={tab.name}
-              title={`(${tab.type}-${tab.projectId.substring(0,3)}) ${tab.name}`}
+              path={tab.slug}
+              title={`(${tab.type}-${tab.projectId.substring(0, 3)}) ${tab.name}`}
             >
               <Content>
-                <tab.tabContent />
+                <tab.tabContent/>
               </Content>
             </TabbedLayout.Route>
           ))}

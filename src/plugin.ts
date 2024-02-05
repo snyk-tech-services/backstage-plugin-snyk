@@ -30,7 +30,8 @@ export const backstagePluginSnykPlugin: any = createPlugin({
     createApiFactory({
       api: snykApiRef,
       deps: { discoveryApi: discoveryApiRef, configApiRef: configApiRef },
-      factory: ({ discoveryApi, configApiRef }) => new SnykApiClient({ discoveryApi, configApiRef }),
+      factory: ({ discoveryApi, configApiRef }) =>
+        new SnykApiClient({ discoveryApi, configApi: configApiRef }),
     }),
   ],
   routes: {
@@ -40,7 +41,7 @@ export const backstagePluginSnykPlugin: any = createPlugin({
 
 export const EntitySnykContent = backstagePluginSnykPlugin.provide(
   createRoutableExtension({
-    name: 'snyk',
+    name: "snyk",
     component: () =>
       import("./components/SnykEntityComponent").then(
         (m) => m.SnykEntityComponent
@@ -51,7 +52,7 @@ export const EntitySnykContent = backstagePluginSnykPlugin.provide(
 
 export const SnykOverview = backstagePluginSnykPlugin.provide(
   createComponentExtension({
-    name: 'SnykOverview',
+    name: "SnykOverview",
     component: {
       lazy: () =>
         import("./components/SnykEntityComponent").then((m) => m.SnykOverview),

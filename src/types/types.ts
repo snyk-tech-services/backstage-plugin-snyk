@@ -1,10 +1,10 @@
-export type issuesCount = {
+export type IssuesCount = {
   critical: number;
   high: number;
   medium: number;
   low: number;
 };
-export type depCount = {
+export type DepCount = {
   directCount: number;
   indirectCount: number;
   totalCount: number;
@@ -354,9 +354,7 @@ export interface ProjectGetResponseType {
   };
 }
 
-export interface ProjectsListV3ResponseType {
-
-}
+export interface ProjectsListV3ResponseType {}
 export interface DepgraphGetResponseType {
   /**
    * The dependency-graph object

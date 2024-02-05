@@ -19,8 +19,9 @@ export {
   EntitySnykContent,
 } from "./plugin";
 
+export * from "./api";
+
 export {
   isPluginApplicableToEntity,
   isPluginApplicableToEntity as isSnykAvailable,
-} from './components/SnykEntityComponent';
-
+} from "./components/SnykEntityComponent";

@@ -13,27 +13,34 @@
     "test": "snyk test"
   },
   "dependencies": {
-    "@backstage/catalog-model": "1.2.0",
-    "@backstage/core-components": "0.12.4",
-    "@backstage/core-plugin-api": "1.0.6",
-    "@backstage/plugin-catalog-react": "1.2.1",
+    "@backstage/catalog-model": "^1.4.3",
+    "@backstage/core-components": "^0.13.10",
+    "@backstage/core-plugin-api": "^1.8.2",
+    "@backstage/plugin-catalog-react": "^1.9.3",
     "@material-ui/icons": "4.11.3",
     "@material-ui/lab": "4.0.0-alpha.61",
-    "@snyk/dep-graph": "2.3.0",
-    "react-circular-progressbar": "^2.0.3",
-    "react-use": "^17.2.4"
+    "@snyk/dep-graph": "2.8.1",
+    "@types/react-dom": "^18.2.18",
+    "react-circular-progressbar": "^2.1.0",
+    "react-use": "^17.4.0"
   },
   "devDependencies": {
-    "@backstage/cli": "^0.16.0",
-    "@backstage/dev-utils": "^1.0.0",
-    "@testing-library/jest-dom": "^5.10.1",
-    "@testing-library/react": "^12.1.4",
-    "@testing-library/user-event": "^13.1.9",
-    "@types/jest": "^26.0.7",
-    "@types/node": "^12.0.0",
-    "msw": "^0.30.1",
-    "node-fetch": "^2.6.1",
-    "snyk": "^1.812.0"
+    "@backstage/cli": "^0.25.1",
+    "@backstage/dev-utils": "^1.0.26",
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^14.2.0",
+    "@testing-library/user-event": "^14.5.1",
+    "@types/jest": "^29.5.8",
+    "@types/node": "^20.9.0",
+    "msw": "^2.0.5",
+    "node-fetch": "^3.3.2",
+    "snyk": "^1.1243.0"
+  },
+  "peerDependencies": {
+    "@material-ui/core": "^4.12.2",
+    "react": "^16.13.1 || ^17.0.0",
+    "react-dom": "^16.13.1 || ^17.0.0",
+    "react-router-dom": "^6.18.0"
   },
   "files": [
     "dist",
