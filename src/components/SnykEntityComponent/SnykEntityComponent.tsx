@@ -112,8 +112,8 @@ export const SnykEntityComponent = () => {
 
   const tabs: Array<SnykTab> = [];
 
-  const orgIds = entity?.metadata.annotations?.[SNYK_ANNOTATION_ORGS].split(',')
-    || entity?.metadata.annotations?.[SNYK_ANNOTATION_ORG].split(',')
+  const orgIds = entity?.metadata.annotations?.[SNYK_ANNOTATION_ORGS]?.split(',')
+    || entity?.metadata.annotations?.[SNYK_ANNOTATION_ORG]?.split(',')
     || [];
   const hasMultipleOrgs = orgIds.length > 1;
 
