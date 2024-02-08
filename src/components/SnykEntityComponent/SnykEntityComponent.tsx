@@ -26,7 +26,6 @@ import {
   mdiLambda,
 } from "./svgs";
 import {useEntity} from "@backstage/plugin-catalog-react";
-import {ProjectsData} from "../../types/projectsTypes";
 import {
   SNYK_ANNOTATION_ORG,
   SNYK_ANNOTATION_ORGS,
@@ -119,11 +118,7 @@ export const SnykEntityComponent = () => {
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const {value, loading, error} = useAsync(async () => {
-    return Promise.all(orgIds.map(async (orgId) => {
-      const projectList: ProjectsData[] = entity?.metadata.annotations ? await snykApi.getCompleteProjectsListFromAnnotations(orgId, entity?.metadata.annotations, hasMultipleOrgs) : []
-      const orgSlug = await snykApi.getOrgSlug(orgId);
-      return {projectList, orgSlug, orgId};
-    }));
+    return snykApi.getCompleteProjectsListForMultipleOrgs(orgIds, entity?.metadata.annotations ?? {});
   });
   if (loading) {
     return (

@@ -54,7 +54,6 @@ export const SnykOverviewComponent = ({entity}: { entity: Entity }) => {
   const orgIds = entity?.metadata.annotations?.[SNYK_ANNOTATION_ORGS]?.split(',')
     || entity?.metadata.annotations?.[SNYK_ANNOTATION_ORG]?.split(',')
     || [];
-  const hasMultipleOrgs = orgIds.length > 1;
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const {value, loading, error} = useAsync(async () => {
@@ -64,17 +63,7 @@ export const SnykOverviewComponent = ({entity}: { entity: Entity }) => {
       medium: 0,
       low: 0,
     };
-    const projectOrgList = await Promise.all(
-      orgIds.map(async (orgId) => {
-        const projectList = entity?.metadata.annotations
-          ? await snykApi.getCompleteProjectsListFromAnnotations(
-            orgId,
-            entity.metadata.annotations,
-            hasMultipleOrgs
-          ) : [];
-        return {projectList, orgId};
-      })
-    );
+    const projectOrgList = await snykApi.getCompleteProjectsListForMultipleOrgs(orgIds, entity?.metadata.annotations ?? {})
 
     let projectsCount = 0;
 

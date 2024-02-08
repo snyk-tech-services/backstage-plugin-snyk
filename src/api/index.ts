@@ -59,6 +59,11 @@ export interface SnykApi {
 
   getProjectDetails(orgName: string, projectId: string): Promise<any>;
 
+  getCompleteProjectsListForMultipleOrgs(
+    orgIds: string[],
+    annotations: Record<string, string>
+  ): Promise<{projectList: ProjectsData[], orgSlug: string, orgId: string}[]>;
+
   getCompleteProjectsListFromAnnotations(
     orgId: string,
     annotations: Record<string, string>,
@@ -241,6 +246,22 @@ export class SnykApiClient implements SnykApi {
     const orgResponseData = await orgResponse.json();
     const orgData = orgResponseData.data as OrgData;
     return orgData.attributes.slug;
+  }
+
+  async getCompleteProjectsListForMultipleOrgs(
+    orgIds: string[],
+    annotations: Record<string, string>
+  ): Promise<{projectList: ProjectsData[], orgSlug: string, orgId: string}[]> {
+    return Promise.all(orgIds.map(async (orgId) => {
+      const projectList: ProjectsData[] = annotations ? await this.getCompleteProjectsListFromAnnotations(orgId, annotations, orgIds.length > 1) : []
+      const orgSlug = await this.getOrgSlug(orgId);
+      return {projectList, orgSlug, orgId};
+    })).then((projectsData) => {
+      if (projectsData.map((data) => data.projectList.length).reduce((a, b) => a + b, 0) === 0) {
+        throw new Error("No projects found for the given annotations.");
+      }
+      return projectsData
+    })
   }
 
   async getCompleteProjectsListFromAnnotations(
