@@ -14,23 +14,17 @@
  * limitations under the License.
  */
 
-import {
-  ApiRef,
-  ConfigApi,
-  createApiRef,
-  DiscoveryApi,
-} from "@backstage/core-plugin-api";
-import {TargetData} from "../types/targetsTypes";
+import {ApiRef, ConfigApi, createApiRef, DiscoveryApi,} from "@backstage/core-plugin-api";
 import {OrgData} from "../types/orgsTypes";
 import {ProjectsData} from "../types/projectsTypes";
 import {
-  SNYK_ANNOTATION_TARGETID,
-  SNYK_ANNOTATION_TARGETNAME,
-  SNYK_ANNOTATION_TARGETS,
-  SNYK_ANNOTATION_PROJECTIDS,
   SNYK_ANNOTATION_EXCLUDE_PROJECTIDS,
   SNYK_ANNOTATION_ORG,
   SNYK_ANNOTATION_ORGS,
+  SNYK_ANNOTATION_PROJECTIDS,
+  SNYK_ANNOTATION_TARGETID,
+  SNYK_ANNOTATION_TARGETNAME,
+  SNYK_ANNOTATION_TARGETS,
 } from "../config";
 import {mockedProjects} from "../utils/mockedProjects";
 import {mockedIssues} from "../utils/mockedIssues";
@@ -201,8 +195,7 @@ export class SnykApiClient implements SnykApi {
         `Error ${response.status} - Failed fetching Vuln Issues snyk data`
       );
     }
-    const jsonResponse = await response.json();
-    return jsonResponse;
+    return await response.json();
   }
 
   async getProjectDetails(orgName: string, projectId: string) {
@@ -221,8 +214,7 @@ export class SnykApiClient implements SnykApi {
         `Error ${response.status} - Failed fetching ProjectDetails snyk data`
       );
     }
-    const jsonResponse = await response.json();
-    return jsonResponse;
+    return await response.json();
   }
 
   async getOrgSlug(orgId: string) {
@@ -253,7 +245,7 @@ export class SnykApiClient implements SnykApi {
     annotations: Record<string, string>
   ): Promise<{projectList: ProjectsData[], orgSlug: string, orgId: string}[]> {
     return Promise.all(orgIds.map(async (orgId) => {
-      const projectList: ProjectsData[] = annotations ? await this.getCompleteProjectsListFromAnnotations(orgId, annotations, orgIds.length > 1) : []
+      const projectList: ProjectsData[] = annotations ? await this.getCompleteProjectsListFromAnnotations(orgId, annotations) : []
       const orgSlug = await this.getOrgSlug(orgId);
       return {projectList, orgSlug, orgId};
     })).then((projectsData) => {
@@ -266,8 +258,7 @@ export class SnykApiClient implements SnykApi {
 
   async getCompleteProjectsListFromAnnotations(
     orgId: string,
-    annotations: Record<string, string>,
-    ignoreMissingTargets = false
+    annotations: Record<string, string>
   ): Promise<ProjectsData[]> {
     let completeProjectsList: ProjectsData[] = [];
 
@@ -284,21 +275,17 @@ export class SnykApiClient implements SnykApi {
     } else if (annotations?.[SNYK_ANNOTATION_TARGETID]) {
       targetsArray.push(annotations?.[SNYK_ANNOTATION_TARGETID]);
     }
-    if (targetsArray.length > 0) {
-      const fullProjectByTargetList = await this.getProjectsListByTargets(
-        orgId,
-        Array.isArray(targetsArray) ? targetsArray : [...targetsArray],
-        ignoreMissingTargets
-      );
-      completeProjectsList.push(...fullProjectByTargetList);
-    }
 
     if (annotations?.[SNYK_ANNOTATION_PROJECTIDS]) {
-      const fullProjectByIdList = await this.getProjectsListByProjectIds(
+      targetsArray.push(...annotations?.[SNYK_ANNOTATION_PROJECTIDS].split(",") ?? [])
+    }
+
+    if (targetsArray.length > 0) {
+      const fullProjectByTargetList = await this.getProjectsList(
         orgId,
-        annotations?.[SNYK_ANNOTATION_PROJECTIDS].split(",")
+        Array.isArray(targetsArray) ? targetsArray : [...targetsArray]
       );
-      completeProjectsList.push(...fullProjectByIdList);
+      completeProjectsList.push(...fullProjectByTargetList);
     }
 
     if (annotations?.[SNYK_ANNOTATION_EXCLUDE_PROJECTIDS]) {
@@ -313,115 +300,40 @@ export class SnykApiClient implements SnykApi {
         return !idsToExclude.includes(project.id);
       });
     }
+
     return completeProjectsList;
   }
 
-  async getProjectsListByTargets(
+  async getProjectsList(
     orgId: string,
-    repoName: string[],
-    ignoreMissing = false
+    projectIdsAndNames: string[]
   ): Promise<ProjectsData[]> {
-    const TargetIdsArray: string[] = [];
-    for (let i = 0; i < repoName.length; i++) {
-      try {
-        TargetIdsArray.push(
-          `target_id=${await this.getTargetId(orgId, repoName[i])}`
-        );
-      } catch (e) {
-        if (!ignoreMissing) throw e
+    if (projectIdsAndNames.length === 0) {
+      return [];
+    }
+
+    const projectIds: string[] = []
+    const projectNames: string[] = []
+    for (const idOrName of projectIdsAndNames) {
+      if (
+        /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/.test(
+          idOrName
+        )
+      ) {
+        projectIds.push(idOrName)
+      } else {
+        projectNames.push(idOrName);
       }
     }
-    const backendBaseUrl = await this.getApiUrl();
-    const v3Headers = this.headers;
-    v3Headers["Content-Type"] = "application/vnd.api+json";
-    const version = this.getSnykApiVersion();
-    const projectsForTargetUrl = `${backendBaseUrl}/rest/orgs/${orgId}/projects?${TargetIdsArray.join(
-      "&"
-    )}&limit=100&version=${version}`;
-    const response = await fetch(`${projectsForTargetUrl}`, {
-      method: "GET",
-      headers: v3Headers,
-    });
 
-    if (response.status >= 400 && response.status < 600) {
-      throw new Error(
-        `Error ${response.status} - Failed fetching Projects list snyk data`
-      );
+    const projects: ProjectsData[] = []
+    if (projectIds.length > 0) {
+      projects.push(...await this.fetchProjectsWithParams(orgId, `ids=${projectIds.join(",")}`))
+    } else if (projectNames.length > 0) {
+      projects.push(...await this.fetchProjectsWithParams(orgId, `names=${projectNames.join(",")}`))
     }
-    const jsonResponse = await response.json();
-    return jsonResponse.data as ProjectsData[];
-  }
 
-  async getProjectsListByProjectIds(
-    orgId: string,
-    projectIdsArray: string[]
-  ): Promise<ProjectsData[]> {
-    const backendBaseUrl = await this.getApiUrl();
-    const v3Headers = this.headers;
-    v3Headers["Content-Type"] = "application/vnd.api+json";
-    const version = this.getSnykApiVersion();
-    const projectsForTargetUrl = `${backendBaseUrl}/rest/orgs/${orgId}/projects?ids=${projectIdsArray.join(
-      "%2C"
-    )}&limit=100&version=${version}`;
-    const response = await fetch(projectsForTargetUrl, {
-      method: "GET",
-      headers: v3Headers,
-    });
-
-    if (response.status >= 400 && response.status < 600) {
-      throw new Error(
-        `Error ${response.status} - Failed fetching Projects list snyk data`
-      );
-    }
-    const jsonResponse = await response.json();
-    return jsonResponse.data as ProjectsData[];
-  }
-
-  private async getTargetId(
-    orgId: string,
-    targetIdentifier: string
-  ): Promise<string> {
-    if (targetIdentifier === "") {
-      throw new Error(
-        `Error - Unable to find repo name. Please add github.com/project-slug or snyk.io/target-id annotation`
-      );
-    }
-    const backendBaseUrl = await this.getApiUrl();
-    const v3Headers = this.headers;
-    v3Headers["Content-Type"] = "application/vnd.api+json";
-    let targetId;
-    if (
-      /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/.test(
-        targetIdentifier
-      )
-    ) {
-      targetId = targetIdentifier;
-    } else {
-      const version = this.getSnykApiVersion();
-      const targetsAPIUrl = `${backendBaseUrl}/rest/orgs/${orgId}/targets?displayName=${encodeURIComponent(
-        targetIdentifier
-      )}&version=${version}`;
-      const targetResponse = await fetch(`${targetsAPIUrl}`, {
-        method: "GET",
-        headers: v3Headers,
-      });
-      if (targetResponse.status >= 400 && targetResponse.status < 600) {
-        throw new Error(
-          `Error ${targetResponse.status} - Failed fetching Targets list snyk data`
-        );
-      }
-      const targetsList = await targetResponse.json();
-      const targetsListData = targetsList.data as TargetData[];
-      targetId = targetsListData.find((target) => {
-        return target.attributes.displayName === targetIdentifier;
-      })?.id;
-      if (!targetId) {
-        throw new Error(
-          `Error - Failed finding Target snyk data for repo ${targetIdentifier}`
-        );
-      }
-    }
-    return targetId;
+    return projects
   }
 
   async getDependencyGraph(orgName: string, projectId: string) {
@@ -442,5 +354,29 @@ export class SnykApiClient implements SnykApi {
     }
     const jsonResponse = await response.json();
     return jsonResponse as ProjectsData[];
+  }
+
+  private async fetchProjectsWithParams(orgId: string, queryParams: string): Promise<ProjectsData[]> {
+    const backendBaseUrl = await this.getApiUrl();
+    const v3Headers = this.headers;
+    v3Headers["Content-Type"] = "application/vnd.api+json";
+    const version = this.getSnykApiVersion();
+
+    const url = `${backendBaseUrl}/rest/orgs/${orgId}/projects?
+    ${queryParams}
+    &limit=100&version=${version}`;
+
+    const response = await fetch(`${url}`, {
+      method: "GET",
+      headers: v3Headers,
+    });
+
+    if (response.status >= 400 && response.status < 600) {
+      throw new Error(
+        `Error ${response.status} - Failed fetching Projects list snyk data`
+      );
+    }
+    const jsonResponse = await response.json();
+    return jsonResponse.data as ProjectsData[];
   }
 }
