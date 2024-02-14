@@ -7,13 +7,13 @@ import {
   TabbedCard,
   CardTab,
 } from "@backstage/core-components";
-import {Grid} from "@material-ui/core";
-import {SnykApi} from "../../api";
-import {useAsync} from "react-use";
-import {Alert} from "@material-ui/lab";
-import {IssuesTable} from "./components/SnykIssuesComponent";
-import {DepGraphInfo} from "./components/SnykDepGraphComponent";
-import {SnykCircularCounter} from "./components/SnykCircularCountersComponent";
+import { Grid } from "@material-ui/core";
+import { SnykApi } from "../../api";
+import { useAsync } from "react-use";
+import { Alert } from "@material-ui/lab";
+import { IssuesTable } from "./components/SnykIssuesComponent";
+import { DepGraphInfo } from "./components/SnykDepGraphComponent";
+import { SnykCircularCounter } from "./components/SnykCircularCountersComponent";
 import {
   ProjectGetResponseType,
   DepgraphGetResponseType,
@@ -35,7 +35,7 @@ export const generateSnykTabForProject = (
     (type) => type !== "license"
   );
   return ({}) => {
-    const {value, loading, error} = useAsync(async () => {
+    const { value, loading, error } = useAsync(async () => {
       const allIssues: UnifiedIssues = await snykApi.listAllAggregatedIssues(
         orgId,
         projectId
@@ -47,7 +47,9 @@ export const generateSnykTabForProject = (
         (issue) => issue.attributes.type === "license"
       );
       const ignoredIssues: Array<Issue> = allIssues.data.filter(
-        (issue) => issue.attributes.status === IssueAttributesStatusEnum.Ignored
+        (issue) =>
+          issue.attributes.ignored === true &&
+          issue.attributes.status != IssueAttributesStatusEnum.Resolved
       );
 
       const depGraph: DepgraphGetResponseType = genericIssues.some(
@@ -69,7 +71,7 @@ export const generateSnykTabForProject = (
     if (loading) {
       return (
         <Content>
-          <Progress/>
+          <Progress />
         </Content>
       );
     } else if (error) {
@@ -82,7 +84,9 @@ export const generateSnykTabForProject = (
 
     const issuesCount = snykApi.getIssuesCount(value.genericIssues);
     const licenseIssuesCount = snykApi.getIssuesCount(value.licenseIssues);
-    const ignoredIssuesCount = snykApi.getIssuesCount(value.ignoredIssues);
+    const ignoredIssuesCount = snykApi.getIgnoredIssuesCount(
+      value.ignoredIssues
+    );
 
     const metadata = {
       origin: value.projectDetails.origin,
@@ -90,7 +94,7 @@ export const generateSnykTabForProject = (
       created: value.projectDetails.created,
       "last tested": value.projectDetails.lastTestedDate,
       "Project ID": `${value.projectDetails.id}`,
-      "Organization": `${orgSlug} (${orgId})`
+      Organization: `${orgSlug} (${orgId})`,
     };
     const linkInfo = {
       title: "More details",
@@ -109,7 +113,7 @@ export const generateSnykTabForProject = (
               >
                 <Grid item xs={12}>
                   <InfoCard title={value.projectDetails.name}>
-                    <StructuredMetadataTable metadata={metadata}/>
+                    <StructuredMetadataTable metadata={metadata} />
                   </InfoCard>
                 </Grid>
               </Grid>
@@ -167,7 +171,7 @@ export const generateSnykTabForProject = (
                     </CardTab>
                     <CardTab label="Dependencies">
                       <Grid container>
-                        <DepGraphInfo depGraph={value.depGraph}/>
+                        <DepGraphInfo depGraph={value.depGraph} />
                       </Grid>
                     </CardTab>
                     <CardTab label="Ignored">
@@ -197,7 +201,7 @@ export const generateSnykTabForProject = (
             >
               <Grid item xs={12}>
                 <InfoCard title={value.projectDetails.name}>
-                  <StructuredMetadataTable metadata={metadata}/>
+                  <StructuredMetadataTable metadata={metadata} />
                 </InfoCard>
               </Grid>
             </Grid>

@@ -408,7 +408,6 @@ export enum IssueAttributesEffectiveSeverityLevelEnum {
 export enum IssueAttributesStatusEnum {
   Open = "open",
   Resolved = "resolved",
-  Ignored = "ignored",
 }
 
 export interface IssueLinks {
