@@ -392,25 +392,29 @@ export class SnykApiClient implements SnykApi {
     orgId: string,
     projectIdsArray: string[]
   ): Promise<ProjectsData[]> {
-    const backendBaseUrl = await this.getApiUrl();
-    const v3Headers = this.headers;
-    v3Headers["Content-Type"] = "application/vnd.api+json";
-    const version = this.getSnykApiVersion();
-    const projectsForTargetUrl = `${backendBaseUrl}/rest/orgs/${orgId}/projects?ids=${projectIdsArray.join(
-      "%2C"
-    )}&limit=100&version=${version}`;
-    const response = await fetch(projectsForTargetUrl, {
-      method: "GET",
-      headers: v3Headers,
-    });
+    if (projectIdsArray.length > 0) {
+      const backendBaseUrl = await this.getApiUrl();
+      const v3Headers = this.headers;
+      v3Headers["Content-Type"] = "application/vnd.api+json";
+      const version = this.getSnykApiVersion();
+      const projectsForProjectIds = `${backendBaseUrl}/rest/orgs/${orgId}/projects?ids=${projectIdsArray.join(
+        "%2C"
+      )}&limit=100&version=${version}`;
+      const response = await fetch(projectsForProjectIds, {
+        method: "GET",
+        headers: v3Headers,
+      });
 
-    if (response.status >= 400 && response.status < 600) {
-      throw new Error(
-        `Error ${response.status} - Failed fetching Projects list snyk data`
-      );
+      if (response.status >= 400 && response.status < 600) {
+        throw new Error(
+          `Error ${response.status} - Failed fetching Projects list snyk data`
+        );
+      }
+      const jsonResponse = await response.json();
+      return jsonResponse.data as ProjectsData[];
+    } else {
+      throw new Error(`Error loading projects by Project IDs.`);
     }
-    const jsonResponse = await response.json();
-    return jsonResponse.data as ProjectsData[];
   }
 
   private async getTargetId(
