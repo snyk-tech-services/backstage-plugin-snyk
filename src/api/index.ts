@@ -20,9 +20,9 @@ import {
   createApiRef,
   DiscoveryApi,
 } from "@backstage/core-plugin-api";
-import {TargetData} from "../types/targetsTypes";
-import {OrgData} from "../types/orgsTypes";
-import {ProjectsData} from "../types/projectsTypes";
+import { TargetData } from "../types/targetsTypes";
+import { OrgData } from "../types/orgsTypes";
+import { ProjectsData } from "../types/projectsTypes";
 import {
   SNYK_ANNOTATION_TARGETID,
   SNYK_ANNOTATION_TARGETNAME,
@@ -32,13 +32,13 @@ import {
   SNYK_ANNOTATION_ORG,
   SNYK_ANNOTATION_ORGS,
 } from "../config";
-import {mockedProjects} from "../utils/mockedProjects";
-import {mockedIssues} from "../utils/mockedIssues";
-import {Entity} from "@backstage/catalog-model";
-import {mockedDepGraphs} from "../utils/mockedDepGraphs";
-import {mockedProjectDetails} from "../utils/mockedProjectDetails";
-import {IssuesCount} from "../types/types";
-import {Issue} from "../types/unifiedIssuesTypes";
+import { mockedProjects } from "../utils/mockedProjects";
+import { mockedIssues } from "../utils/mockedIssues";
+import { Entity } from "@backstage/catalog-model";
+import { mockedDepGraphs } from "../utils/mockedDepGraphs";
+import { mockedProjectDetails } from "../utils/mockedProjectDetails";
+import { IssuesCount } from "../types/types";
+import { Issue } from "../types/unifiedIssuesTypes";
 
 const DEFAULT_PROXY_PATH_BASE = "";
 
@@ -71,6 +71,8 @@ export interface SnykApi {
 
   getSnykApiVersion(): string;
 
+  getSnykIssuesApiVersion(): string;
+
   getOrgSlug(orgId: string): Promise<string>;
 
   isMocked(): boolean;
@@ -80,6 +82,8 @@ export interface SnykApi {
   isShowResolvedInGraphs(entity: Entity): boolean;
 
   getIssuesCount(issues: Array<Issue>): IssuesCount;
+
+  getIgnoredIssuesCount(issues: Array<Issue>): IssuesCount;
 }
 
 export class SnykApiClient implements SnykApi {
@@ -126,19 +130,21 @@ export class SnykApiClient implements SnykApi {
       "2023-06-19~experimental"
     );
   }
+  getSnykIssuesApiVersion(): string {
+    return (
+      this.configApi.getOptionalString("snyk.issueApiVersion") ?? "2024-01-23"
+    );
+  }
 
   isAvailableInEntity(entity: Entity): boolean {
     return (
       this.isMocked() ||
-      (
-        Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_ORG]) ||
-        Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_ORGS])
-      ) && (
-        Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETNAME]) ||
-        Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETID]) ||
-        Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETS]) ||
-        Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_PROJECTIDS])
-      )
+      ((Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_ORG]) ||
+        Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_ORGS])) &&
+        (Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETNAME]) ||
+          Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETID]) ||
+          Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETS]) ||
+          Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_PROJECTIDS])))
     );
   }
 
@@ -146,27 +152,70 @@ export class SnykApiClient implements SnykApi {
     const criticalSevCount = issues.filter(
       (issue) =>
         issue.attributes.effective_severity_level === "critical" &&
+        !issue.attributes.ignored &&
         (issue.attributes.status !== "resolved" ||
           this.isShowResolvedInGraphs())
     ).length;
     const highSevCount = issues.filter(
       (issue) =>
         issue.attributes.effective_severity_level === "high" &&
+        !issue.attributes.ignored &&
         (issue.attributes.status !== "resolved" ||
           this.isShowResolvedInGraphs())
     ).length;
     const mediumSevCount = issues.filter(
       (issue) =>
         issue.attributes.effective_severity_level === "medium" &&
+        !issue.attributes.ignored &&
         (issue.attributes.status !== "resolved" ||
           this.isShowResolvedInGraphs())
     ).length;
     const lowSevCount = issues.filter(
       (issue) =>
         issue.attributes.effective_severity_level === "low" &&
+        !issue.attributes.ignored &&
         (issue.attributes.status !== "resolved" ||
           this.isShowResolvedInGraphs())
     ).length;
+
+    return {
+      critical: criticalSevCount,
+      high: highSevCount,
+      medium: mediumSevCount,
+      low: lowSevCount,
+    };
+  };
+
+  getIgnoredIssuesCount = (issues: Array<Issue>): IssuesCount => {
+    const criticalSevCount = issues.filter(
+      (issue) =>
+        issue.attributes.effective_severity_level === "critical" &&
+        issue.attributes.ignored &&
+        (issue.attributes.status !== "resolved" ||
+          this.isShowResolvedInGraphs())
+    ).length;
+    const highSevCount = issues.filter(
+      (issue) =>
+        issue.attributes.effective_severity_level === "high" &&
+        issue.attributes.ignored &&
+        (issue.attributes.status !== "resolved" ||
+          this.isShowResolvedInGraphs())
+    ).length;
+    const mediumSevCount = issues.filter(
+      (issue) =>
+        issue.attributes.effective_severity_level === "medium" &&
+        issue.attributes.ignored &&
+        (issue.attributes.status !== "resolved" ||
+          this.isShowResolvedInGraphs())
+    ).length;
+    const lowSevCount = issues.filter(
+      (issue) =>
+        issue.attributes.effective_severity_level === "low" &&
+        issue.attributes.ignored &&
+        (issue.attributes.status !== "resolved" ||
+          this.isShowResolvedInGraphs())
+    ).length;
+
     return {
       critical: criticalSevCount,
       high: highSevCount,
@@ -183,7 +232,7 @@ export class SnykApiClient implements SnykApi {
 
     const backendBaseUrl = await this.getApiUrl();
     const v3Headers = this.headers;
-    const version = this.getSnykApiVersion();
+    const version = this.getSnykIssuesApiVersion();
     v3Headers["Content-Type"] = "application/vnd.api+json";
     const apiUrl = `${backendBaseUrl}/rest/orgs/${orgId}/issues?version=${version}&scan_item.id=${projectId}&scan_item.type=project&limit=100`;
     const response = await fetch(`${apiUrl}`, {
@@ -307,7 +356,7 @@ export class SnykApiClient implements SnykApi {
           `target_id=${await this.getTargetId(orgId, repoName[i])}`
         );
       } catch (e) {
-        if (!ignoreMissing) throw e
+        if (!ignoreMissing) throw e;
       }
     }
     const backendBaseUrl = await this.getApiUrl();

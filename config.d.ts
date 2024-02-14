@@ -31,6 +31,10 @@ export interface Config {
     /**
      * @visibility frontend
      */
+    issuesApiVersion?: string;
+    /**
+     * @visibility frontend
+     */
     mocked?: boolean;
     /**
      * @visibility frontend
