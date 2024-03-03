@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 import {
-  createPlugin,
-  createApiFactory,
-  discoveryApiRef,
-  createRoutableExtension,
-  createComponentExtension,
-  configApiRef,
+    createPlugin,
+    createApiFactory,
+    discoveryApiRef,
+    createRoutableExtension,
+    createComponentExtension,
+    configApiRef, fetchApiRef,
 } from "@backstage/core-plugin-api";
 import { SnykApiClient, snykApiRef } from "./api";
 import { entityContentRouteRef } from "./routes";
@@ -29,9 +29,9 @@ export const backstagePluginSnykPlugin: any = createPlugin({
   apis: [
     createApiFactory({
       api: snykApiRef,
-      deps: { discoveryApi: discoveryApiRef, configApiRef: configApiRef },
-      factory: ({ discoveryApi, configApiRef }) =>
-        new SnykApiClient({ discoveryApi, configApi: configApiRef }),
+      deps: { discoveryApi: discoveryApiRef, configApiRef: configApiRef, fetchApi: fetchApiRef },
+      factory: ({ discoveryApi, configApiRef, fetchApi }) =>
+        new SnykApiClient({ discoveryApi, configApi: configApiRef, fetchApi}),
     }),
   ],
   routes: {
