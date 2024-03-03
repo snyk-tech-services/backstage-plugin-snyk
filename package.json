@@ -10,7 +10,8 @@
   },
   "scripts": {
     "build": "yarn tsc",
-    "test": "snyk test"
+    "test": "snyk test",
+    "test:jest": "backstage-cli test"
   },
   "dependencies": {
     "@backstage/catalog-model": "^1.4.4",
@@ -27,6 +28,7 @@
   "devDependencies": {
     "@backstage/cli": "^0.25.2",
     "@backstage/dev-utils": "^1.0.26",
+    "@backstage/test-utils": "^1.5.0",
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.2.0",
     "@testing-library/user-event": "^14.5.1",
