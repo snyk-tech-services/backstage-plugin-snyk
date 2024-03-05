@@ -110,9 +110,9 @@ snyk:
   # Host of the Web UI to render links. Defaults to "app.snyk.io"
   # If you use EU or AU Snyk account, change this to app.eu.snyk.io or app.au.snyk.io
   appHost: app.snyk.io
-  # Uncomment to specify version of the API to use on the calls. Defaults to "2023-06-19~experimental".
+  # Uncomment to specify version of the API to use on the calls. Defaults to "2024-02-28".
   # Override with care, not all versions have a target API
-  # apiVersion: 2023-06-19~experimental
+  # apiVersion: 2024-02-28
   # uncomment to specify version for issues API specifically. Defaults to 2024-01-23
   # issuesApiVersion: 2024-01-23
   # Mocks the API calls, useful for development and for testing the plugin without a Snyk account. Defaults to "false"
