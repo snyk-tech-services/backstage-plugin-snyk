@@ -126,8 +126,7 @@ export class SnykApiClient implements SnykApi {
 
   getSnykApiVersion(): string {
     return (
-      this.configApi.getOptionalString("snyk.apiVersion") ??
-      "2023-06-19~experimental"
+      this.configApi.getOptionalString("snyk.apiVersion") ?? "2024-02-28"
     );
   }
   getSnykIssuesApiVersion(): string {
@@ -438,7 +437,7 @@ export class SnykApiClient implements SnykApi {
       targetId = targetIdentifier;
     } else {
       const version = this.getSnykApiVersion();
-      const targetsAPIUrl = `${backendBaseUrl}/rest/orgs/${orgId}/targets?displayName=${encodeURIComponent(
+      const targetsAPIUrl = `${backendBaseUrl}/rest/orgs/${orgId}/targets?display_name=${encodeURIComponent(
         targetIdentifier
       )}&version=${version}`;
       const targetResponse = await fetch(`${targetsAPIUrl}`, {
