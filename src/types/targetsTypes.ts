@@ -5,7 +5,7 @@ export interface TargetDataAttributes {
      * @type {string}
      * @memberof TargetDataAttributes
      */
-    displayName?: string;
+    display_name?: string;
     /**
      * The URL for the resource. We do not use this as part of our representation of the identity of the target, as it can      be changed externally to Snyk We are reliant on individual integrations providing us with this value. Currently it is only provided by the CLI 
      * @type {string}
