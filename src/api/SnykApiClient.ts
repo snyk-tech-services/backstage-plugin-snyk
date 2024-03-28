@@ -108,7 +108,6 @@ export class SnykApiClient implements SnykApi {
             headers,
             method,
         };
-        console.log(requestInit)
         const resp = await this.fetchApi.fetch(path, requestInit);
         if (!resp.ok) {
             throw await ResponseError.fromResponse(resp);
@@ -434,7 +433,6 @@ export class SnykApiClient implements SnykApi {
             const targetsAPIUrl = `${backendBaseUrl}/rest/orgs/${orgId}/targets?displayName=${encodeURIComponent(
                 targetIdentifier
             )}&version=${version}`;
-            console.log("targetsAPIUrl", targetsAPIUrl);
             const targetResponse = await this.fetch(`${targetsAPIUrl}`, "GET", true);
             if (targetResponse.status >= 400 && targetResponse.status < 600) {
                 throw new Error(
