@@ -98,7 +98,7 @@ export class SnykApiClient implements SnykApi {
     private async fetch(
         path: string,
         method: string,
-        isV3 = false,
+        isV3 = true,
     ) {
         const headers: HeadersInit = this.headers;
         if (isV3) {
@@ -242,7 +242,7 @@ export class SnykApiClient implements SnykApi {
         const version = this.getSnykIssuesApiVersion();
         v3Headers["Content-Type"] = "application/vnd.api+json";
         const apiUrl = `${backendBaseUrl}/rest/orgs/${orgId}/issues?version=${version}&scan_item.id=${projectId}&scan_item.type=project&limit=100`;
-        const response = await this.fetch(`${apiUrl}`, "GET", true);
+        const response = await this.fetch(`${apiUrl}`, "GET");
 
         if (response.status >= 400 && response.status < 600) {
             throw new Error(
@@ -280,7 +280,7 @@ export class SnykApiClient implements SnykApi {
         v3Headers["Content-Type"] = "application/vnd.api+json";
         const version = this.getSnykApiVersion();
         const orgsAPIUrl = `${backendBaseUrl}/rest/orgs/${orgId}?version=${version}`;
-        const response = await this.fetch(`${orgsAPIUrl}`, "GET", true);
+        const response = await this.fetch(`${orgsAPIUrl}`, "GET");
         if (response.status >= 400 && response.status < 600) {
             throw new Error(`Error ${response.status} - Failed fetching Org data`);
         }
@@ -364,7 +364,7 @@ export class SnykApiClient implements SnykApi {
             const projectsForTargetUrl = `${backendBaseUrl}/rest/orgs/${orgId}/projects?${TargetIdsArray.join(
                 "&"
             )}&limit=100&version=${version}`;
-            const response = await this.fetch(`${projectsForTargetUrl}`, "GET", true);
+            const response = await this.fetch(`${projectsForTargetUrl}`, "GET");
 
             if (response.status >= 400 && response.status < 600) {
                 throw new Error(
@@ -396,7 +396,7 @@ export class SnykApiClient implements SnykApi {
             const projectsForProjectIds = `${backendBaseUrl}/rest/orgs/${orgId}/projects?ids=${projectIdsArray.join(
                 "%2C"
             )}&limit=100&version=${version}`;
-            const response = await this.fetch(projectsForProjectIds, "GET", true);
+            const response = await this.fetch(projectsForProjectIds, "GET");
 
             if (response.status >= 400 && response.status < 600) {
                 throw new Error(
@@ -434,7 +434,7 @@ export class SnykApiClient implements SnykApi {
             const targetsAPIUrl = `${backendBaseUrl}/rest/orgs/${orgId}/targets?display_name=${encodeURIComponent(
                 targetIdentifier
             )}&version=${version}`;
-            const targetResponse = await this.fetch(`${targetsAPIUrl}`, "GET", true);
+            const targetResponse = await this.fetch(`${targetsAPIUrl}`, "GET");
             if (targetResponse.status >= 400 && targetResponse.status < 600) {
                 throw new Error(
                     `Error ${targetResponse.status} - Failed fetching Targets list snyk data`
