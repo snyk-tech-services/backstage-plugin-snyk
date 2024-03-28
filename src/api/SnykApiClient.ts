@@ -134,8 +134,7 @@ export class SnykApiClient implements SnykApi {
 
     getSnykApiVersion(): string {
         return (
-            this.configApi.getOptionalString("snyk.apiVersion") ??
-            "2023-06-19~experimental"
+            this.configApi.getOptionalString("snyk.apiVersion") ?? "2024-02-28"
         );
     }
     getSnykIssuesApiVersion(): string {
@@ -374,12 +373,14 @@ export class SnykApiClient implements SnykApi {
             }
             const jsonResponse = await response.json();
             return jsonResponse.data as ProjectsData[];
-        } else {
+        } else if (!ignoreMissing) {
             throw new Error(
                 `No target IDs found in org ${orgId} for the targets [${repoName.join(
                     ","
                 )}].`
             );
+        } else {
+            return [];
         }
     }
 
@@ -430,7 +431,7 @@ export class SnykApiClient implements SnykApi {
             targetId = targetIdentifier;
         } else {
             const version = this.getSnykApiVersion();
-            const targetsAPIUrl = `${backendBaseUrl}/rest/orgs/${orgId}/targets?displayName=${encodeURIComponent(
+            const targetsAPIUrl = `${backendBaseUrl}/rest/orgs/${orgId}/targets?display_name=${encodeURIComponent(
                 targetIdentifier
             )}&version=${version}`;
             const targetResponse = await this.fetch(`${targetsAPIUrl}`, "GET", true);
@@ -442,7 +443,7 @@ export class SnykApiClient implements SnykApi {
             const targetsList = await targetResponse.json();
             const targetsListData = targetsList.data as TargetData[];
             targetId = targetsListData.find((target) => {
-                return target.attributes.displayName === targetIdentifier;
+                return target.attributes.display_name === targetIdentifier;
             })?.id;
             if (!targetId) {
                 throw new Error(
