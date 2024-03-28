@@ -14,10 +14,10 @@
     "test:jest": "backstage-cli test"
   },
   "dependencies": {
-    "@backstage/catalog-model": "^1.4.4",
-    "@backstage/core-components": "^0.14.0",
-    "@backstage/core-plugin-api": "^1.9.0",
-    "@backstage/plugin-catalog-react": "^1.10.0",
+    "@backstage/catalog-model": "^1.4.5",
+    "@backstage/core-components": "^0.14.3",
+    "@backstage/core-plugin-api": "^1.9.1",
+    "@backstage/plugin-catalog-react": "^1.11.2",
     "@material-ui/icons": "4.11.3",
     "@material-ui/lab": "4.0.0-alpha.61",
     "@snyk/dep-graph": "2.8.1",
@@ -26,9 +26,9 @@
     "react-use": "^17.4.0"
   },
   "devDependencies": {
-    "@backstage/cli": "^0.25.2",
-    "@backstage/dev-utils": "^1.0.26",
-    "@backstage/test-utils": "^1.5.0",
+    "@backstage/cli": "^0.26.2",
+    "@backstage/dev-utils": "^1.0.30",
+    "@backstage/test-utils": "^1.5.3",
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.2.0",
     "@testing-library/user-event": "^14.5.1",
