@@ -10,8 +10,7 @@
   },
   "scripts": {
     "build": "yarn tsc",
-    "test": "snyk test",
-    "test:jest": "backstage-cli test"
+    "test": "backstage-cli test"
   },
   "dependencies": {
     "@backstage/catalog-model": "^1.4.5",
