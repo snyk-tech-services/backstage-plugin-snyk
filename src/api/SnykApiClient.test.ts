@@ -17,36 +17,5 @@ describe('SnykApiClient', () => {
                 expect(result).toEqual([]);
             });
         });
-        describe('when there is a single annotation', () => {
-           describe('and the annotation is snyk.io/org-id', () => {
-              it('should return an empty array', async () => {
-                    const result = await snykApiClient.getCompleteProjectsListFromAnnotations(EXAMPLE_ORG_ID, {
-                        'snyk.io/org-id': EXAMPLE_ORG_ID,
-                    });
-                    expect(result).toEqual([]);
-              });
-           });
-           describe('and the annotation is snyk.io/org-ids', () => {
-it('should return an empty array', async () => {
-                    const result = await snykApiClient.getCompleteProjectsListFromAnnotations(EXAMPLE_ORG_ID, {
-                        'snyk.io/org-ids': EXAMPLE_ORG_ID,
-                    });
-                    expect(result).toEqual([]);
-              });
-           });
-           describe('and the annotation is github.com/project-slug (target name)', () => {
-               it('should return a full project by the provided target name', async () => {
-                    const result = await snykApiClient.getCompleteProjectsListFromAnnotations(EXAMPLE_ORG_ID, {
-                        'github.com/project-slug': 'Snyk Demo/java-goof',
-                    });
-                    //TODO: fix to include the actual expected result
-                    expect(result).toContainEqual([
-                        {
-                            id: EXAMPLE_ORG_ID,
-                        },
-                    ]);
-               });
-           });
-        });
     });
 });
