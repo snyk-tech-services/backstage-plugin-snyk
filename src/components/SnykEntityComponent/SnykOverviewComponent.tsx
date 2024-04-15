@@ -4,9 +4,9 @@ import { InfoCard, WarningPanel, Progress } from "@backstage/core-components";
 import { useApi } from "@backstage/core-plugin-api";
 import { snykApiRef } from "../../api";
 import { useAsync } from "react-use";
-import { Alert } from "@material-ui/lab";
+import { Alert } from '@mui/material';
 
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 import { SnykCircularCounter } from "./components/SnykCircularCountersComponent";
 import { IssuesCount as IssuesCountType } from "../../types/types";
 import { useEntity } from "@backstage/plugin-catalog-react";

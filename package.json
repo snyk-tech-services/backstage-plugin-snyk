@@ -17,8 +17,8 @@
     "@backstage/core-components": "^0.14.3",
     "@backstage/core-plugin-api": "^1.9.1",
     "@backstage/plugin-catalog-react": "^1.11.2",
-    "@material-ui/icons": "4.11.3",
-    "@material-ui/lab": "4.0.0-alpha.61",
+    "@mui/icons-material": "^5.15.15",
+    "@mui/material": "^5.15.15",
     "@snyk/dep-graph": "2.8.1",
     "@types/react-dom": "^18.2.18",
     "react-circular-progressbar": "^2.1.0",
@@ -38,7 +38,6 @@
     "snyk": "^1.1243.0"
   },
   "peerDependencies": {
-    "@material-ui/core": "^4.12.2",
     "react": "^16.13.1 || ^17.0.0",
     "react-dom": "^16.13.1 || ^17.0.0",
     "react-router-dom": "^6.18.0"

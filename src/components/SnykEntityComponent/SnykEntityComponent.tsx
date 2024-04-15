@@ -13,10 +13,10 @@ import {
 } from "@backstage/core-components";
 import {snykApiRef} from "../../api";
 import {useAsync} from "react-use";
-import {Alert} from "@material-ui/lab";
+import { Alert } from '@mui/material';
 import * as utils from "../../utils/utils";
 import {generateSnykTabForProject} from "./SnykTab";
-import GitHubIcon from "@material-ui/icons/GitHub";
+import GitHubIcon from "@mui/icons-material/GitHub";
 
 import {
   mdiConsole,
