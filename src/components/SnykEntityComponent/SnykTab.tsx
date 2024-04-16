@@ -13,7 +13,7 @@ import { useAsync } from "react-use";
 import { Alert } from "@material-ui/lab";
 import { IssuesTable } from "./components/SnykIssuesComponent";
 import { DepGraphInfo } from "./components/SnykDepGraphComponent";
-import { SnykCircularCounter } from "./components/SnykCircularCountersComponent";
+import { SnykCounter } from "./components/SnykCountersComponent";
 import {
   ProjectGetResponseType,
   DepgraphGetResponseType,
@@ -125,25 +125,22 @@ export const generateSnykTabForProject = (
               >
                 <Grid item xs={4}>
                   <InfoCard title="Vulnerabilities">
-                    <SnykCircularCounter
+                    <SnykCounter
                       issuesCount={issuesCount}
-                      loading={loading}
                     />
                   </InfoCard>
                 </Grid>
                 <Grid item xs={4}>
                   <InfoCard title="License Issues">
-                    <SnykCircularCounter
+                    <SnykCounter
                       issuesCount={licenseIssuesCount}
-                      loading={loading}
                     />
                   </InfoCard>
                 </Grid>
                 <Grid item xs={4}>
                   <InfoCard title="Ignored Issues">
-                    <SnykCircularCounter
+                    <SnykCounter
                       issuesCount={ignoredIssuesCount}
-                      loading={loading}
                     />
                   </InfoCard>
                 </Grid>
@@ -213,25 +210,22 @@ export const generateSnykTabForProject = (
             >
               <Grid item xs={4}>
                 <InfoCard title="Vulnerabilities">
-                  <SnykCircularCounter
+                  <SnykCounter
                     issuesCount={issuesCount}
-                    loading={loading}
                   />
                 </InfoCard>
               </Grid>
               <Grid item xs={4}>
                 <InfoCard title="License Issues">
-                  <SnykCircularCounter
+                  <SnykCounter
                     issuesCount={licenseIssuesCount}
-                    loading={loading}
                   />
                 </InfoCard>
               </Grid>
               <Grid item xs={4}>
                 <InfoCard title="Ignored Issues">
-                  <SnykCircularCounter
+                  <SnykCounter
                     issuesCount={ignoredIssuesCount}
-                    loading={loading}
                   />
                 </InfoCard>
               </Grid>
