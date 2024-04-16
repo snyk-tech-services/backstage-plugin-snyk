@@ -3,7 +3,7 @@ import * as depgraph from "@snyk/dep-graph";
 import { SnykCircularDepCounter } from "./SnykCircularDepCountersComponent";
 import { DepgraphGetResponseType } from "../../../types/types";
 import { DepCount as depCountType } from "../../../types/types";
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 import { InfoCard } from "@backstage/core-components";
 
 type DepGraphProps = {
