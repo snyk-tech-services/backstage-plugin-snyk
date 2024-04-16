@@ -25,6 +25,7 @@ import { mockedDepGraphs } from "../utils/mockedDepGraphs";
 import { mockedProjectDetails } from "../utils/mockedProjectDetails";
 import { IssuesCount } from "../types/types";
 import { Issue } from "../types/unifiedIssuesTypes";
+const pkg = require('../../package.json');
 const DEFAULT_PROXY_PATH_BASE = "";
 
 type Options = {
@@ -80,7 +81,7 @@ export class SnykApiClient implements SnykApi {
 
     private headers = {
         "Content-Type": "application/json",
-        "User-Agent": "tech-services/backstage-plugin/1.0",
+        "User-Agent": `tech-services/backstage-plugin/${pkg.version || "0.0.0-development"}`,
     };
 
     constructor(options: Options) {
