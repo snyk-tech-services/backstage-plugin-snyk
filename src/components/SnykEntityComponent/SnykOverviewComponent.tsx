@@ -7,7 +7,7 @@ import { useAsync } from "react-use";
 import { Alert } from '@mui/material';
 
 import { Grid } from "@mui/material";
-import { SnykCircularCounter } from "./components/SnykCircularCountersComponent";
+import { SnykCounter } from "./components/SnykCountersComponent";
 import { IssuesCount as IssuesCountType } from "../../types/types";
 import { useEntity } from "@backstage/plugin-catalog-react";
 import { UnifiedIssues } from "../../types/unifiedIssuesTypes";
@@ -129,18 +129,8 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
   if (loading) {
     return (
       <InfoCard
-        title="Loading..."
-        deepLink={{ title: "Retrieving Vulnerabilities from Snyk", link: "" }}
+        title="Snyk Issues"
       >
-        <SnykCircularCounter
-          issuesCount={{
-            critical: 0,
-            high: 0,
-            medium: 0,
-            low: 0,
-          }}
-          loading={loading}
-        />
         <Progress />
       </InfoCard>
     );
@@ -162,8 +152,7 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
 
   return (
     <InfoCard title="Snyk Issues" deepLink={linkInfo}>
-      <SnykCircularCounter issuesCount={issuesCount} loading={loading} />
-    </InfoCard>
+      <SnykCounter issuesCount={issuesCount} /> </InfoCard>
   );
 };
 
