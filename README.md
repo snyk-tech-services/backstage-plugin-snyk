@@ -2,8 +2,6 @@
 
 [![Inactively Maintained](https://img.shields.io/badge/Maintenance%20Level-Inactively%20Maintained-yellowgreen.svg)](https://gist.github.com/cheerfulstoic/d107229326a01ff0f333a1d3476e068d)
 
-**This repository is in maintenance mode, no new features are being developed. Bug & security fixes will continue to be delivered. Open source contributions are welcome for small features & fixes (no breaking changes)**
-
 The Snyk plugin displays security details from [snyk.io](https://snyk.io/).
 
 ![Snyk Tab](docs/assets/backstage-snyk-plugin-tab.png)
@@ -131,7 +129,7 @@ export SNYK_TOKEN="123-123-123-123"
 
 - `snyk.io/org-id` is the ID of the Snyk organization where your project is. You can find the ID in the Organization Settings in the Snyk dashboard.
 - `snyk.io/org-ids` specify one or more Snyk organization ids, comma separated. This will try to find any of the targets or projects in any of the organizations. `snyk.io/org-id` is ignored when this annotation is set.
-  
+
 7. Then add one or more than one of the following annotations to your entities.
 
 - `snyk.io/target-id` specify a single target by name or ID. Target ID will avoid an API call and be therefore faster. Use this [API endpoint](https://apidocs.snyk.io/?version=2023-06-19%7Ebeta#get-/orgs/-org_id-/targets) to get the Target IDs.
