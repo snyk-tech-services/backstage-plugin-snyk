@@ -1,143 +1,139 @@
 # Snyk Backstage Plugin
 
-[![Inactively Maintained](https://img.shields.io/badge/Maintenance%20Level-Inactively%20Maintained-yellowgreen.svg)](https://gist.github.com/cheerfulstoic/d107229326a01ff0f333a1d3476e068d)
-
 The Snyk plugin displays security details from [snyk.io](https://snyk.io/).
 
 ![Snyk Tab](docs/assets/backstage-snyk-plugin-tab.png)
 
-## Getting started
+## Features
 
-> **Requirements: Snyk API enabled (Paid plans only)**
+- List vulnerabilities detected by Snyk directly in Backstage with the `EntitySnykContent` component.
+- Use the `SnykOverview` widget to get a compact vulnerability count on your entity page.
 
-1. Install plugin
+## Installation
+
+1. Ensure you are on a Snyk Paid plan to access the Snyk API.
+
+2. Install the plugin:
 
 ```bash
-# packages/app
 yarn add --cwd packages/app backstage-plugin-snyk
 ```
 
-2. Add plugin to the app
-
-```typescript
-// packages/app/src/App.tsx
-import { EntitySnykContent } from 'backstage-plugin-snyk';
-
-....
-
-<FlatRoutes>
-...
-<Route path="/snyk" element={<EntitySnykContent />}/>
-...
-</FlatRoutes>
-
-```
-
-3. Add Snyk card and tab to the entity page
-   The plugin is composed of 2 main parts
-
-- Snyk tile on the entity overview page
-- Security tab in the entity displaying further details
-
-a. Import the elements
+3. Add the plugin to the `EntityPage.tsx` file. Feel free to rename the title to Security, Snyk, Vulns, or whatever you prefer.
 
 ```typescript
 // packages/app/src/components/catalog/EntityPage.tsx
+
 import {
   SnykOverview,
   EntitySnykContent,
   isSnykAvailable,
 } from "backstage-plugin-snyk";
+
+...
+
+const serviceEntityPage = (
+  ...
+  <EntityLayout.Route 
+    path="/snyk"
+    title="Snyk"
+    // Uncomment the line below if you'd like to only show the tab on entities with the correct annotations already set
+    // if={isSnykAvailable}
+  >
+    <EntitySnykContent />
+  </EntityLayout.Route>
+);
 ```
 
-b. Add the overview card\
-\
-![Overview card](docs/assets/backstage-snyk-plugin-overview-card.png)
+To show the vulnerability count widget:
 
 ```typescript
 // packages/app/src/components/catalog/EntityPage.tsx
-const entityWarningContent = (
-  <>
+const overviewContent = (
+  <Grid container spacing={3} alignItems="stretch">
+    ...
+    <Grid item md={6} if={isSnykAvailable}>
+      <SnykOverview />
+    </Grid>
+  </Grid>
+);
+```
+
+Or make it conditional:
+
+```typescript
+// packages/app/src/components/catalog/EntityPage.tsx
+
+const overviewContent = (
+  <Grid container spacing={3} alignItems="stretch">
     ...
     <EntitySwitch>
       <EntitySwitch.Case if={isSnykAvailable}>
-        <Grid item md={3}>
+        <Grid item md={6}>
           <SnykOverview />
         </Grid>
       </EntitySwitch.Case>
     </EntitySwitch>
-    ...
-  </>
+  </Grid>
 );
 ```
 
-c. Add the tab (feel free to rename title to Security, snyk, vulns, whatever you think is best)
+## Plugin Configuration
 
-```typescript
-const ServiceEntityPage = (
-  <EntityLayoutWrapper>
-    ...
-    <EntityLayout.Route path="/snyk" title="Security">
-      <EntitySnykContent />
-    </EntityLayout.Route>
-    ...
-  </EntityLayoutWrapper>
-);
-```
-
-4. Add snyk proxy config to app-config.yaml file at the root directory. If using Snyk self hosted, adjust target to https://YOURHOSTNAME/api. User Agent helps us see how much API traffic comes from backstage setups so we can invest more in the plugin !
+1. Add the Snyk proxy configuration to the `app-config.yaml` file in the root directory. The User Agent helps us track API traffic from Backstage setups so we can invest more in the plugin!
 
 ```yaml
 proxy:
   endpoints:
     ...
     /snyk:
-      # Host of the API to use on the calls.
-      # If you use EU or AU Snyk account, change this to https://api.eu.snyk.io/ or https://api.au.snyk.io/
-      target: https://api.snyk.io/
+      # Host of the API to use for calls.
+      # For Snyk Enterprise customers with regional contracts, change this to api.eu.snyk.io (for EU) or api.au.snyk.io (for AUS) (see https://docs.snyk.io/working-with-snyk/regional-hosting-and-data-residency)
+      target: https://api.snyk.io/ 
       headers:
-        User-Agent: tech-services/backstage-plugin/1.0
+        User-Agent: tech-services/backstage-plugin/1.x
         Authorization: token ${SNYK_TOKEN}
     ...
 ```
 
-You can also add the following optional configuration to your app-config.yaml
+2. Optionally, add the following configuration to your `app-config.yaml`:
 
 ```yaml
 snyk:
   # Host of the Web UI to render links. Defaults to "app.snyk.io"
-  # If you use EU or AU Snyk account, change this to app.eu.snyk.io or app.au.snyk.io
+  # If you use an EU or AU Snyk account, change this to app.eu.snyk.io or app.au.snyk.io
   appHost: app.snyk.io
-  # Uncomment to specify version of the API to use on the calls. Defaults to "2024-02-28".
-  # Override with care, not all versions have a target API
+  #
+  # Uncomment to specify the version of the API to use for calls. Defaults to "2024-02-28".
+  # Override with care, not all versions have a target API.
   # apiVersion: 2024-02-28
-  # uncomment to specify version for issues API specifically. Defaults to 2024-01-23
+  # Uncomment to specify the version for the issues API specifically. Defaults to 2024-01-23
   # issuesApiVersion: 2024-01-23
-  # Mocks the API calls, useful for development and for testing the plugin without a Snyk account. Defaults to "false"
+  #
+  # Mocks the API calls, useful for development and for testing the plugin without a Snyk account. Defaults to "false".
   mocked: false
-  # Will show resolved issues in all the graphs. Defaults to "false" to show only non-resolved issues
+  #
+  # Shows resolved issues in all graphs. Defaults to "false" to show only non-resolved issues.
   showResolvedInGraphs: false
 ```
 
-5. Get your Snyk token (a service account with Viewer permission at your group level is preferred) and provide SNYK_TOKEN env var with the value "<YOURTOKEN>"
+3. Obtain your Snyk token (a service account with Viewer permission at your group level is preferred) and set the `SNYK_TOKEN` environment variable with its value:
 
-```bash
-export SNYK_TOKEN="123-123-123-123"
-```
+   ```bash
+   export SNYK_TOKEN="123-123-123-123"
+   ```
 
-6. Add one of the following annotation to your entities.
+4. Add one of the following annotations to your entities:
 
-- `snyk.io/org-id` is the ID of the Snyk organization where your project is. You can find the ID in the Organization Settings in the Snyk dashboard.
-- `snyk.io/org-ids` specify one or more Snyk organization ids, comma separated. This will try to find any of the targets or projects in any of the organizations. `snyk.io/org-id` is ignored when this annotation is set.
+   - `snyk.io/org-id`: The ID of the Snyk organization where your project is located. You can find the ID in the Organization Settings in the Snyk dashboard.
+   - `snyk.io/org-ids`: Specify one or more Snyk organization IDs, comma-separated. This will try to find any targets or projects in any of the organizations. `snyk.io/org-id` is ignored when this annotation is set.
 
-7. Then add one or more than one of the following annotations to your entities.
+5. Then add one or more of the following annotations to your entities:
 
-- `snyk.io/target-id` specify a single target by name or ID. Target ID will avoid an API call and be therefore faster. Use this [API endpoint](https://apidocs.snyk.io/?version=2023-06-19%7Ebeta#get-/orgs/-org_id-/targets) to get the Target IDs.
-- `snyk.io/targets` specify one or more targets, by name or ID. Target ID will avoid an API call and be therefore faster. Use this [API endpoint](https://apidocs.snyk.io/?version=2023-06-19%7Ebeta#get-/orgs/-org_id-/targets) to get the Target IDs.
-- `snyk.io/project-ids` are the project ID (see slug in url or ID in project settings)
-  If multiple projects (like multiple package.json or pom files, add them with increasing number), add them comma separated
-- `snyk.io/exclude-project-ids` to exclude specific projects you might not want.
-  ....
+   - `snyk.io/target-id`: Specify a single target by name or ID. Using the target ID will avoid an API call and be faster. Use this [API endpoint](https://apidocs.snyk.io/?version=2023-06-19%7Ebeta#get-/orgs/-org_id-/targets) to get the Target IDs.
+   - `snyk.io/targets`: Specify one or more targets by name or ID. Using the target ID will avoid an API call and be faster. Use this [API endpoint](https://apidocs.snyk.io/?version=2023-06-19%7Ebeta#get-/orgs/-org_id-/targets) to get the Target IDs.
+   - `snyk.io/project-ids`: The project ID (see slug in URL or ID in project settings). If there are multiple projects (e.g., multiple package.json or pom files), add them comma-separated.
+   - `snyk.io/exclude-project-ids`: Exclude specific projects you might not want.
 
 Example:
 
@@ -160,31 +156,29 @@ spec:
   ....
 ```
 
-Some more examples can be found in [here](https://github.com/snyk-tech-services/backstage-plugin-snyk/tree/develop/test/fixtures)
+More examples can be found [here](https://github.com/snyk-tech-services/backstage-plugin-snyk/tree/develop/test/fixtures).
 
-## Migration steps from plugin version 1.x to 2.x
+## Migration Steps from Plugin Version 1.x to 2.x
 
-- Update the proxy target to not contain /v1
+- Update the proxy target to not contain `/v1`.
 
 ## Troubleshooting
 
-- Missing or wrong token set in the backend proxy.\
+- Missing or incorrect token set in the backend proxy.
 
   ![Missing/wrong token](docs/assets/backstage_card_error_wrong_or_missing_token.png)
 
-- 404s from Snyk API? Add [pathRewrite your app-config.yaml proxy](https://github.com/snyk-tech-services/backstage-plugin-snyk/issues/11) to the following
+- 404 errors from the Snyk API? Add the following `pathRewrite` to your `app-config.yaml` proxy:
 
 ```yaml
-"/snyk":
-  target: https://api.snyk.io/
-  headers:
-    User-Agent: tech-services/backstage-plugin/1.0
-    Authorization:
-      $env: SNYK_TOKEN
-  pathRewrite:
-    "^/proxy/snyk/": "/"
+proxy:
+  endpoints:
+    ...
+    /snyk:
+      target: https://api.snyk.io/
+      headers:
+        User-Agent: tech-services/backstage-plugin/1.x
+        Authorization: token ${SNYK_TOKEN}
+      pathRewrite:
+        "^/proxy/snyk/": "/"
 ```
-
-## Limitations
-
-Infrastructure as Code and Snyk Code projects are not supported currently.
