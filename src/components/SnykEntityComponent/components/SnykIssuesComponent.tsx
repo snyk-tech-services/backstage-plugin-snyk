@@ -78,7 +78,13 @@ export const IssuesTable: FC<DenseTableProps> = ({ issues, pageUrl }) => {
   return (
     <Table
       title="Security vulnerabilities"
-      options={{ search: false, paging: false }}
+      options={{
+        search: false,
+        paging: true,
+        pageSize: 20,
+        paginationPosition: 'both',
+        pageSizeOptions: [20, 50, 100]
+      }}
       columns={columns}
       data={data}
     />
