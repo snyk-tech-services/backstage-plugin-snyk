@@ -1,19 +1,21 @@
 import { Entity } from "@backstage/catalog-model";
-import React from "react";
+import React, { ReactNode } from "react";
 import { InfoCard, WarningPanel, Progress } from "@backstage/core-components";
 import { useApi } from "@backstage/core-plugin-api";
 import { snykApiRef } from "../../api";
 import { useAsync } from "react-use";
 import { Alert } from '@mui/material';
+import { IssuesCount } from "../../types/types";
 
 import { Grid } from "@mui/material";
 import { SnykCounter } from "./components/SnykCountersComponent";
+import { SnykCounterTable } from "./components/SnykCountersTableComponent";
 import { IssuesCount as IssuesCountType } from "../../types/types";
 import { useEntity } from "@backstage/plugin-catalog-react";
 import { UnifiedIssues } from "../../types/unifiedIssuesTypes";
 import { SNYK_ANNOTATION_ORG, SNYK_ANNOTATION_ORGS } from "../../config";
 
-export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
+export const SnykOverviewComponent = ({ entity, children }: { entity: Entity, children: (data: IssuesCount) => ReactNode }) => {
   const snykApi = useApi(snykApiRef);
 
   if (!entity || !entity?.metadata.name) {
@@ -69,10 +71,10 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
       orgIds.map(async (orgId) => {
         const projectList = entity?.metadata.annotations
           ? await snykApi.getCompleteProjectsListFromAnnotations(
-              orgId,
-              entity.metadata.annotations,
-              hasMultipleOrgs
-            )
+            orgId,
+            entity.metadata.annotations,
+            hasMultipleOrgs
+          )
           : [];
         return { projectList, orgId };
       })
@@ -152,11 +154,25 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
 
   return (
     <InfoCard title="Snyk Issues" deepLink={linkInfo}>
-      <SnykCounter issuesCount={issuesCount} /> </InfoCard>
+      {children(issuesCount)}
+    </InfoCard>
   );
 };
 
 export const SnykOverview = () => {
   const { entity } = useEntity();
-  return <SnykOverviewComponent entity={entity} />;
+  return <SnykOverviewComponent entity={entity}>
+    {function (data) {
+      return <SnykCounter issuesCount={data} />
+    }}
+  </SnykOverviewComponent>;
+};
+
+export const SnykOverviewTable = () => {
+  const { entity } = useEntity();
+  return <SnykOverviewComponent entity={entity}>
+    {function (data) {
+      return <SnykCounterTable issuesCount={data} />
+    }}
+  </SnykOverviewComponent>;
 };

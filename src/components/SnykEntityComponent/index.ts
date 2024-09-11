@@ -9,7 +9,7 @@ import {
 } from "../../config";
 
 export {SnykEntityComponent} from "./SnykEntityComponent";
-export {SnykOverview} from "./SnykOverviewComponent";
+export {SnykOverview, SnykOverviewTable} from "./SnykOverviewComponent";
 
 export const isPluginApplicableToEntity = (entity: Entity) =>
   (Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_ORG]) ||

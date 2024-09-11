@@ -16,6 +16,7 @@
 export {
   backstagePluginSnykPlugin,
   SnykOverview,
+  SnykOverviewTable,
   EntitySnykContent,
 } from "./plugin";
 

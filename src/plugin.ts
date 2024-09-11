@@ -60,3 +60,12 @@ export const SnykOverview = backstagePluginSnykPlugin.provide(
     },
   })
 );
+export const SnykOverviewTable = backstagePluginSnykPlugin.provide(
+  createComponentExtension({
+    name: "SnykOverviewTable",
+    component: {
+      lazy: () =>
+        import("./components/SnykEntityComponent").then((m) => m.SnykOverviewTable),
+    },
+  })
+);
