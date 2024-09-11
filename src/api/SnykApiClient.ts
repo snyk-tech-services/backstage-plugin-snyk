@@ -24,7 +24,7 @@ import { Entity } from "@backstage/catalog-model";
 import { mockedDepGraphs } from "../utils/mockedDepGraphs";
 import { mockedProjectDetails } from "../utils/mockedProjectDetails";
 import { IssuesCount } from "../types/types";
-import { Issue } from "../types/unifiedIssuesTypes";
+import { Issue, UnifiedIssues } from "../types/unifiedIssuesTypes";
 const pkg = require('../../package.json');
 const DEFAULT_PROXY_PATH_BASE = "";
 
@@ -42,7 +42,7 @@ export const snykApiRef: ApiRef<SnykApi> = createApiRef<SnykApi>({
 });
 
 export interface SnykApi {
-    listAllAggregatedIssues(orgName: string, projectId: string): Promise<any>;
+    listAllAggregatedIssues(orgName: string, projectId: string): Promise<UnifiedIssues>;
 
     getProjectDetails(orgName: string, projectId: string): Promise<any>;
 
@@ -232,26 +232,40 @@ export class SnykApiClient implements SnykApi {
         };
     };
 
-    async listAllAggregatedIssues(orgId: string, projectId: string) {
+    async listAllAggregatedIssues(orgId: string, projectId: string): Promise<UnifiedIssues> {
         if (this.isMocked()) {
             await new Promise((resolve) => setTimeout(resolve, 500));
             return mockedIssues[projectId];
         }
 
-        const backendBaseUrl = await this.getApiUrl();
-        const v3Headers = this.headers;
-        const version = this.getSnykIssuesApiVersion();
-        v3Headers["Content-Type"] = "application/vnd.api+json";
-        const apiUrl = `${backendBaseUrl}/rest/orgs/${orgId}/issues?version=${version}&scan_item.id=${projectId}&scan_item.type=project&limit=100`;
-        const response = await this.fetch(`${apiUrl}`, "GET");
+        const fetchPage = async (url: string): Promise<any[]> => {
+            const backendBaseUrl = await this.getApiUrl();
+            const v3Headers = this.headers;
+            v3Headers["Content-Type"] = "application/vnd.api+json";
 
-        if (response.status >= 400 && response.status < 600) {
-            throw new Error(
-                `Error ${response.status} - Failed fetching Vuln Issues snyk data`
-            );
-        }
-        return response.json();
-    }
+            const response = await this.fetch(`${backendBaseUrl}${url}`, "GET");
+
+            if (response.status >= 400 && response.status < 600) {
+                throw new Error(`Error ${response.status} - Failed fetching Vuln Issues snyk data`);
+            }
+
+            const json = await response.json();
+
+            const currentIssues = json?.data || [];
+
+            if (json?.links?.next) {
+                const nextPageIssues = await fetchPage(json.links.next);
+                return [...currentIssues, ...nextPageIssues];
+            }
+
+            return currentIssues;
+        };
+
+        const version = this.getSnykIssuesApiVersion();
+        const initialApiUrl = `/rest/orgs/${orgId}/issues?version=${version}&scan_item.id=${projectId}&scan_item.type=project&limit=100`;
+
+        return await fetchPage(initialApiUrl);
+  }
 
     async getProjectDetails(orgName: string, projectId: string) {
         if (this.isMocked()) {

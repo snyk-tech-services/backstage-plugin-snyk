@@ -108,7 +108,7 @@ export const SnykOverviewComponent = ({ entity }: { entity: Entity }) => {
           );
 
         const currentProjectIssuesCount = snykApi.getIssuesCount(
-          vulnsIssues.data
+          vulnsIssues
         );
         aggregatedIssuesCount.critical += currentProjectIssuesCount.critical;
         aggregatedIssuesCount.high += currentProjectIssuesCount.high;

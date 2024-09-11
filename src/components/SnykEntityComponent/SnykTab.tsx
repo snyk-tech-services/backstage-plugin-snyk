@@ -40,13 +40,13 @@ export const generateSnykTabForProject = (
         orgId,
         projectId
       );
-      const genericIssues: Array<Issue> = allIssues.data.filter((issue) =>
+      const genericIssues: Array<Issue> = allIssues.filter((issue) =>
         genericIssuesTypeArray.includes(issue.attributes.type)
       );
-      const licenseIssues: Array<Issue> = allIssues.data.filter(
+      const licenseIssues: Array<Issue> = allIssues.filter(
         (issue) => issue.attributes.type === "license"
       );
-      const ignoredIssues: Array<Issue> = allIssues.data.filter(
+      const ignoredIssues: Array<Issue> = allIssues.filter(
         (issue) =>
           issue.attributes.ignored === true &&
           issue.attributes.status != IssueAttributesStatusEnum.Resolved
