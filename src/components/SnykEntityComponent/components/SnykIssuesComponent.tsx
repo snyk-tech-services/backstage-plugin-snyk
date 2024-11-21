@@ -14,7 +14,7 @@ export const IssuesTable: FC<DenseTableProps> = ({ issues, pageUrl }) => {
     { title: "Type", field: "type" },
     { title: "Status", field: "status" },
     { title: "Description", field: "description" },
-    { title: "Priority Score", field: "priority" },
+    { title: "Score", field: "score" },
   ];
 
   const data = issues
@@ -38,7 +38,8 @@ export const IssuesTable: FC<DenseTableProps> = ({ issues, pageUrl }) => {
         status: issue.attributes.status,
         statusRaw: issue.attributes.status,
         description: issue.attributes.title,
-        priority: issue.attributes.priority?.score || "",
+        // either gets a priority score or a risk score
+        score: issue.attributes.priority?.score || issue.attributes.risk?.score.value || "",
       };
 
       for (const key in values) {
@@ -70,7 +71,7 @@ export const IssuesTable: FC<DenseTableProps> = ({ issues, pageUrl }) => {
         if (a.statusRaw === "resolved" && b.statusRaw === "resolved") {
           return severity[a.severityRaw] < severity[b.severityRaw] ? 1 : -1;
         }
-        return a.priority < b.priority ? 1 : -1;
+        return a.score < b.score ? 1 : -1;
       }
       return severity[a.severityRaw] < severity[b.severityRaw] ? 1 : -1;
     });

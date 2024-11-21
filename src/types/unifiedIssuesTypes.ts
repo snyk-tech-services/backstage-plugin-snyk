@@ -157,6 +157,36 @@ export interface Priority {
   score: number;
 }
 
+export interface Score {
+  /**
+ * A model version as string.
+ * @type {string}
+ * @memberof Score
+ */
+  model?: string;
+  /**
+   * A numeric priority score from 0 to 1000 determined by snyk.
+   * @type {number}
+   * @memberof Score
+   */
+  value: number;
+}
+
+export interface Risk {
+    /**
+   * An array of factors that contributed to scoring.
+   * @type {Array<PriorityFactor>}
+   * @memberof Risk
+   */
+    factors?: Array<PriorityFactor>;
+    /**
+     * A priority score determined by snyk.
+     * @type {Score}
+     * @memberof Risk
+     */
+    score: Score;
+}
+
 export enum ProblemTypeDef {
   Rule = "rule",
   Vulnerability = "vulnerability",
@@ -340,6 +370,12 @@ export interface IssueAttributes {
    * @memberof IssueAttributes
    */
   priority?: Priority;
+  /**
+   *
+   * @type {Risk}
+   * @memberof IssueAttributes
+   */
+  risk?: Risk;
   /**
    * A list of details for vulnerability data, policy, etc that are the source of this issue.
    * @type {Array<Problem>}
