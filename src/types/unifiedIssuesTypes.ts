@@ -159,7 +159,7 @@ export interface Priority {
 
 export interface Score {
   /**
- * An array of factors that contributed to scoring.
+ * A model version as string.
  * @type {string}
  * @memberof Score
  */
@@ -180,7 +180,7 @@ export interface Risk {
    */
     factors?: Array<PriorityFactor>;
     /**
-     * A numeric priority score from 0 to 1000 determined by snyk.
+     * A priority score determined by snyk.
      * @type {Score}
      * @memberof Risk
      */

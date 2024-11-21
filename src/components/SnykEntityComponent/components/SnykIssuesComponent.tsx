@@ -38,7 +38,7 @@ export const IssuesTable: FC<DenseTableProps> = ({ issues, pageUrl }) => {
         status: issue.attributes.status,
         statusRaw: issue.attributes.status,
         description: issue.attributes.title,
-        // the line below is changed from priority.score
+        // two possible locations where the numeric value of a priority score is stored
         priority: issue.attributes.priority?.score || issue.attributes.risk?.score.value || "",
       };
 
