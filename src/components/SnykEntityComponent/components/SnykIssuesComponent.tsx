@@ -39,7 +39,7 @@ export const IssuesTable: FC<DenseTableProps> = ({ issues, pageUrl }) => {
         statusRaw: issue.attributes.status,
         description: issue.attributes.title,
         // the line below is changed from priority.score
-        priority: issue.attributes.risk?.score.value || "",
+        priority: issue.attributes.priority?.score || issue.attributes.risk?.score.value || "",
       };
 
       for (const key in values) {
