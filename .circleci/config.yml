@@ -60,11 +60,15 @@ workflows:
                 - main
     jobs:
       - build-test-monitor:
-          context: SNYK
+          context: 
+            - SNYK
+            - BACKSTAGE_SNYK_PLUGIN
   build-test-monitor-publish:
     jobs:
       - build-test-monitor:
-          context: SNYK
+          context: 
+            - SNYK
+            - BACKSTAGE_SNYK_PLUGIN
           filters:
             branches:
               only:
@@ -72,7 +76,9 @@ workflows:
   build-test:
       jobs:
         - build-test:
-            context: SNYK
+            context: 
+              - SNYK
+              - BACKSTAGE_SNYK_PLUGIN
             filters:
               branches:
                 ignore:
