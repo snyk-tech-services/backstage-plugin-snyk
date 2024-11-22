@@ -6,7 +6,7 @@ jobs:
   build-test-monitor:
       docker:
         # specify the version
-        - image: cimg/node:18.19.0
+        - image: cimg/node:20.18
 
       steps:
         - checkout
@@ -30,7 +30,7 @@ jobs:
   build-test:
       docker:
         # specify the version
-        - image: cimg/node:18.19.0
+        - image: cimg/node:20.18
 
       steps:
         - checkout
