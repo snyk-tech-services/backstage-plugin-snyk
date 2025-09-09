@@ -5,19 +5,42 @@
   "version": "0.0.0-development",
   "license": "Apache-2.0",
   "publishConfig": {
-    "access": "public",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts"
+    "access": "public"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./alpha": "./src/alpha/index.ts",
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "alpha": [
+        "src/alpha/index.ts"
+      ],
+      "package.json": [
+        "package.json"
+      ]
+    }
+  },
+  "backstage": {
+    "role": "frontend-plugin",
+    "pluginId": "snyk",
+    "pluginPackages": [
+      "backstage-plugin-snyk"
+    ]
   },
   "scripts": {
     "build": "yarn tsc",
+    "start": "backstage-cli package start --config ./dev/app-config.yaml",
     "test": "backstage-cli test"
   },
   "dependencies": {
-    "@backstage/catalog-model": "^1.4.5",
-    "@backstage/core-components": "^0.14.3",
-    "@backstage/core-plugin-api": "^1.9.1",
-    "@backstage/plugin-catalog-react": "^1.11.2",
+    "@backstage/catalog-model": "backstage:^",
+    "@backstage/core-compat-api": "backstage:^",
+    "@backstage/core-components": "backstage:^",
+    "@backstage/core-plugin-api": "backstage:^",
+    "@backstage/frontend-plugin-api": "backstage:^",
+    "@backstage/plugin-catalog-react": "backstage:^",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
     "@snyk/dep-graph": "2.8.1",
@@ -26,9 +49,11 @@
     "react-use": "^17.4.0"
   },
   "devDependencies": {
-    "@backstage/cli": "^0.26.2",
-    "@backstage/dev-utils": "^1.0.30",
-    "@backstage/test-utils": "^1.5.3",
+    "@backstage/cli": "backstage:^",
+    "@backstage/dev-utils": "backstage:^",
+    "@backstage/test-utils": "backstage:^",
+    "@backstage/frontend-defaults": "backstage:^",
+    "@backstage/plugin-catalog": "backstage:^",
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.2.0",
     "@testing-library/user-event": "^14.5.1",
@@ -37,6 +62,9 @@
     "msw": "^2.0.5",
     "node-fetch": "^3.3.2",
     "semantic-release": "^24.2.0",
+    "react": "^18.0.2",
+    "react-dom": "^18.0.2",
+    "react-router-dom": "^6.3.0",
     "snyk": "^1.1243.0"
   },
   "peerDependencies": {

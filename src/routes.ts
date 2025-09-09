@@ -15,6 +15,6 @@
  */
 import { createRouteRef } from "@backstage/core-plugin-api";
 
-export const entityContentRouteRef: any = createRouteRef({
+export const entityContentRouteRef = createRouteRef({
   id: "snyk",
 });

@@ -33,7 +33,7 @@ export const generateSnykTabForProject = (
 ) => {
   const genericIssuesTypeArray = Object.values(TypeDef).filter(
     (type) => type !== "license"
-  );
+  ) as Exclude<TypeDef, TypeDef.License>[];
   return ({}) => {
     const { value, loading, error } = useAsync(async () => {
       const allIssues: UnifiedIssues = await snykApi.listAllAggregatedIssues(
@@ -41,7 +41,7 @@ export const generateSnykTabForProject = (
         projectId
       );
       const genericIssues: Array<Issue> = allIssues.filter((issue) =>
-        genericIssuesTypeArray.includes(issue.attributes.type)
+        genericIssuesTypeArray.includes(issue.attributes.type as Exclude<TypeDef, TypeDef.License>)
       );
       const licenseIssues: Array<Issue> = allIssues.filter(
         (issue) => issue.attributes.type === "license"
