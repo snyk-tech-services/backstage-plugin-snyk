@@ -12,6 +12,7 @@ import { ProjectsData } from "../types/projectsTypes";
 import {
     SNYK_ANNOTATION_TARGETID,
     SNYK_ANNOTATION_TARGETNAME,
+    SNYK_ANNOTATION_TARGETDISPLAY,
     SNYK_ANNOTATION_TARGETS,
     SNYK_ANNOTATION_PROJECTIDS,
     SNYK_ANNOTATION_EXCLUDE_PROJECTIDS,
@@ -149,9 +150,10 @@ export class SnykApiClient implements SnykApi {
             this.isMocked() ||
             ((Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_ORG]) ||
                     Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_ORGS])) &&
-                (Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETNAME]) ||
+                (Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETS]) ||
                     Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETID]) ||
-                    Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETS]) ||
+                    Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETDISPLAY]) ||
+                    Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_TARGETNAME]) ||
                     Boolean(entity.metadata.annotations?.[SNYK_ANNOTATION_PROJECTIDS])))
         );
     }
@@ -315,15 +317,28 @@ export class SnykApiClient implements SnykApi {
             completeProjectsList = mockedProjects;
             return completeProjectsList;
         }
-        const targetsArray = annotations?.[SNYK_ANNOTATION_TARGETS]
-            ? annotations?.[SNYK_ANNOTATION_TARGETS].split(",")
+        // Build targets according to precedence:
+        // 1) snyk.io/targets
+        // 2) snyk.io/target-id
+        // 3) snyk.io/target-name (SNYK_ANNOTATION_TARGETDISPLAY)
+        // 4) github.com/project-slug (SNYK_ANNOTATION_TARGETNAME)
+        let targetsArray: string[] = [];
+        const explicitTargets = annotations?.[SNYK_ANNOTATION_TARGETS]
+            ? annotations[SNYK_ANNOTATION_TARGETS].split(",").map((s) => s.trim()).filter(Boolean)
             : [];
+        const hasProjectIds = Boolean(annotations?.[SNYK_ANNOTATION_PROJECTIDS]);
 
-        if (annotations?.[SNYK_ANNOTATION_TARGETNAME]) {
-            targetsArray.push(annotations?.[SNYK_ANNOTATION_TARGETNAME]);
+        if (explicitTargets.length > 0) {
+            targetsArray = explicitTargets;
         } else if (annotations?.[SNYK_ANNOTATION_TARGETID]) {
-            targetsArray.push(annotations?.[SNYK_ANNOTATION_TARGETID]);
+            targetsArray = [annotations[SNYK_ANNOTATION_TARGETID].trim()].filter(Boolean);
+        } else if (annotations?.[SNYK_ANNOTATION_TARGETDISPLAY]) {
+            targetsArray = [annotations[SNYK_ANNOTATION_TARGETDISPLAY].trim()].filter(Boolean);
+        } else if (!hasProjectIds && annotations?.[SNYK_ANNOTATION_TARGETNAME]) {
+            // Only fall back to github.com/project-slug when no Snyk-specific annotations are present
+            targetsArray = [annotations[SNYK_ANNOTATION_TARGETNAME].trim()].filter(Boolean);
         }
+
         if (targetsArray.length > 0) {
             const fullProjectByTargetList = await this.getProjectsListByTargets(
                 orgId,
@@ -431,7 +446,7 @@ export class SnykApiClient implements SnykApi {
     ): Promise<string> {
         if (targetIdentifier === "") {
             throw new Error(
-                `Error - Unable to find repo name. Please add github.com/project-slug or snyk.io/target-id annotation`
+                `Error - Unable to resolve target. Please add snyk.io/target-id (preferred) or snyk.io/targets, or use snyk.io/target-name or github.com/project-slug as a fallback`
             );
         }
         const backendBaseUrl = await this.getApiUrl();
@@ -446,20 +461,63 @@ export class SnykApiClient implements SnykApi {
             targetId = targetIdentifier;
         } else {
             const version = this.getSnykApiVersion();
-            const targetsAPIUrl = `${backendBaseUrl}/rest/orgs/${orgId}/targets?display_name=${encodeURIComponent(
+            const normalize = (s: string | undefined) => (s || "").trim().toLowerCase();
+            const wanted = normalize(targetIdentifier);
+
+            const tryMatch = (targets: TargetData[]): TargetData | undefined => {
+                // First try exact, case-insensitive match on display_name
+                let found = targets.find((target) => normalize(target.attributes.display_name) === wanted);
+                if (found) return found;
+                // Then try matching by repo path segment (owner/repo) from URL
+                for (const target of targets) {
+                    const url = target?.attributes?.url;
+                    if (!url) continue;
+                    try {
+                        const u = new URL(url);
+                        const path = u.pathname.replace(/^\//, "").replace(/\.git$/, "");
+                        if (normalize(path) === wanted) {
+                            return target;
+                        }
+                    } catch (_) {
+                        // ignore URL parse issues and continue
+                    }
+                }
+                return undefined;
+            };
+
+            // 1) Try filtered request by display_name for efficiency
+            const filteredUrl = `${backendBaseUrl}/rest/orgs/${orgId}/targets?display_name=${encodeURIComponent(
                 targetIdentifier
-            )}&version=${version}`;
-            const targetResponse = await this.fetch(`${targetsAPIUrl}`, "GET");
-            if (targetResponse.status >= 400 && targetResponse.status < 600) {
+            )}&limit=100&version=${version}`;
+            const filteredResp = await this.fetch(filteredUrl, "GET");
+            if (filteredResp.status >= 400 && filteredResp.status < 600) {
                 throw new Error(
-                    `Error ${targetResponse.status} - Failed fetching Targets list snyk data`
+                    `Error ${filteredResp.status} - Failed fetching Targets list snyk data`
                 );
             }
-            const targetsList = await targetResponse.json();
-            const targetsListData = targetsList.data as TargetData[];
-            targetId = targetsListData.find((target) => {
-                return target.attributes.display_name === targetIdentifier;
-            })?.id;
+            const filteredJson = await filteredResp.json();
+            let match: TargetData | undefined = tryMatch((filteredJson?.data as TargetData[]) || []);
+
+            // 2) If not found, paginate through all targets and scan
+            if (!match) {
+                const baseListPath = `/rest/orgs/${orgId}/targets?limit=100&version=${version}`;
+                let nextPath: string | undefined = baseListPath;
+                while (nextPath) {
+                    const pageResp = await this.fetch(`${backendBaseUrl}${nextPath}`, "GET");
+                    if (pageResp.status >= 400 && pageResp.status < 600) {
+                        throw new Error(
+                            `Error ${pageResp.status} - Failed fetching Targets list snyk data`
+                        );
+                    }
+                    const pageJson = await pageResp.json();
+                    const pageData = (pageJson?.data as TargetData[]) || [];
+                    match = tryMatch(pageData);
+                    if (match) break;
+                    nextPath = pageJson?.links?.next;
+                }
+            }
+
+            targetId = match?.id;
             if (!targetId) {
                 throw new Error(
                     `Error - Failed finding Target snyk data for repo ${targetIdentifier}`
