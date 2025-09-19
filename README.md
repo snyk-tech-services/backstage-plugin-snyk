@@ -130,10 +130,18 @@ snyk:
 
 5. Then add one or more of the following annotations to your entities:
 
-   - `snyk.io/target-id`: Specify a single target by name or ID. Using the target ID will avoid an API call and be faster. Use this [API endpoint](https://apidocs.snyk.io/?version=2023-06-19%7Ebeta#get-/orgs/-org_id-/targets) to get the Target IDs.
    - `snyk.io/targets`: Specify one or more targets by name or ID. Using the target ID will avoid an API call and be faster. Use this [API endpoint](https://apidocs.snyk.io/?version=2023-06-19%7Ebeta#get-/orgs/-org_id-/targets) to get the Target IDs.
+   - `snyk.io/target-id`: Specify a single target by name or ID. Using the target ID will avoid an API call and be faster. Use this [API endpoint](https://apidocs.snyk.io/?version=2023-06-19%7Ebeta#get-/orgs/-org_id-/targets) to get the Target IDs.
+   - `snyk.io/target-name`: Specify a single target by display name. Prefer `snyk.io/target-id` when possible.
    - `snyk.io/project-ids`: The project ID (see slug in URL or ID in project settings). If there are multiple projects (e.g., multiple package.json or pom files), add them comma-separated.
    - `snyk.io/exclude-project-ids`: Exclude specific projects you might not want.
+
+Annotation precedence when resolving targets:
+
+1. `snyk.io/targets`
+2. `snyk.io/target-id`
+3. `snyk.io/target-name`
+4. `github.com/project-slug` (fallback only when none of the above are set)
 
 Example:
 
