@@ -37,6 +37,6 @@
         "strictPropertyInitialization": true,
         "stripInternal": true,
         "target": "ES2019",
-        "types": ["node"]
+        "types": ["node", "react", "react-dom"]
     }
 }
