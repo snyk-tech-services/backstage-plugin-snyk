@@ -14,10 +14,12 @@
     "test": "backstage-cli test"
   },
   "dependencies": {
-    "@backstage/catalog-model": "^1.4.5",
-    "@backstage/core-components": "^0.17.5",
-    "@backstage/core-plugin-api": "^1.9.1",
-    "@backstage/plugin-catalog-react": "^1.11.2",
+    "@backstage/catalog-model": "backstage:^",
+    "@backstage/core-compat-api": "backstage:^",
+    "@backstage/core-components": "backstage:^",
+    "@backstage/core-plugin-api": "backstage:^",
+    "@backstage/frontend-plugin-api": "backstage:^",
+    "@backstage/plugin-catalog-react": "backstage:^",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
     "@snyk/dep-graph": "2.8.1",
@@ -25,9 +27,11 @@
     "react-use": "^17.4.0"
   },
   "devDependencies": {
-    "@backstage/cli": "^0.26.2",
-    "@backstage/dev-utils": "^1.0.30",
-    "@backstage/test-utils": "^1.5.3",
+    "@backstage/cli": "backstage:^",
+    "@backstage/dev-utils": "backstage:^",
+    "@backstage/frontend-defaults": "backstage:^",
+    "@backstage/plugin-catalog": "backstage:^",
+    "@backstage/test-utils": "backstage:^",
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.2.0",
     "@testing-library/user-event": "^14.5.1",
@@ -59,5 +63,6 @@
     "branches": [
       "main"
     ]
-  }
+  },
+  "packageManager": "yarn@4.10.3"
 }
