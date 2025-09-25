@@ -235,7 +235,7 @@ export class SnykApiClient implements SnykApi {
     async listAllAggregatedIssues(orgId: string, projectId: string): Promise<UnifiedIssues> {
         if (this.isMocked()) {
             await new Promise((resolve) => setTimeout(resolve, 500));
-            return mockedIssues[projectId];
+            return mockedIssues[projectId].data;
         }
 
         const fetchPage = async (url: string): Promise<any[]> => {

@@ -1,0 +1,1 @@
+export { snykPlugin as default } from "./plugin";
