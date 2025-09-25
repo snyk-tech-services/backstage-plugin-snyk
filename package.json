@@ -5,9 +5,29 @@
   "version": "0.0.0-development",
   "license": "Apache-2.0",
   "publishConfig": {
-    "access": "public",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts"
+    "access": "public"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./alpha": "./src/alpha/index.ts",
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "alpha": [
+        "src/alpha/index.ts"
+      ],
+      "package.json": [
+        "package.json"
+      ]
+    }
+  },
+  "backstage": {
+    "role": "frontend-plugin",
+    "pluginId": "snyk",
+    "pluginPackages": [
+      "backstage-plugin-snyk"
+    ]
   },
   "scripts": {
     "build": "yarn tsc",
