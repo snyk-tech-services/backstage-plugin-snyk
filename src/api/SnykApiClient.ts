@@ -323,11 +323,10 @@ export class SnykApiClient implements SnykApi {
       completeProjectsList = mockedProjects;
       return completeProjectsList;
     }
-    // Build targets according to precedence:
-    // 1) snyk.io/targets
-    // 2) snyk.io/target-id
-    // 3) snyk.io/target-name (SNYK_ANNOTATION_TARGETDISPLAY)
-    // 4) github.com/project-slug (SNYK_ANNOTATION_TARGETNAME)
+    // Build targets with the following precedence:
+    // - Start with snyk.io/targets if present
+    // - Then append snyk.io/target-id, else snyk.io/target-name
+    // - If none of the above are set, and no project-ids are present, fall back to github.com/project-slug
     let targetsArray: string[] = [];
     const explicitTargets = annotations?.[SNYK_ANNOTATION_TARGETS]
       ? annotations[SNYK_ANNOTATION_TARGETS].split(',')
@@ -338,20 +337,16 @@ export class SnykApiClient implements SnykApi {
 
     if (explicitTargets.length > 0) {
       targetsArray = explicitTargets;
-    } else if (annotations?.[SNYK_ANNOTATION_TARGETID]) {
-      targetsArray = [annotations[SNYK_ANNOTATION_TARGETID].trim()].filter(
-        Boolean,
-      );
-    } else if (annotations?.[SNYK_ANNOTATION_TARGETDISPLAY]) {
-      targetsArray = [annotations[SNYK_ANNOTATION_TARGETDISPLAY].trim()].filter(
-        Boolean,
-      );
-    } else if (!hasProjectIds && annotations?.[SNYK_ANNOTATION_TARGETNAME]) {
-      // Only fall back to github.com/project-slug when no Snyk-specific annotations are present
-      targetsArray = [annotations[SNYK_ANNOTATION_TARGETNAME].trim()].filter(
-        Boolean,
-      );
     }
+    if (annotations?.[SNYK_ANNOTATION_TARGETID]) {
+      targetsArray.push(annotations[SNYK_ANNOTATION_TARGETID].trim());
+    } else if (annotations?.[SNYK_ANNOTATION_TARGETDISPLAY]) {
+      targetsArray.push(annotations[SNYK_ANNOTATION_TARGETDISPLAY].trim());
+    } else if (!hasProjectIds && targetsArray.length === 0 && annotations?.[SNYK_ANNOTATION_TARGETNAME]) {
+      // Fallback to github.com/project-slug ONLY if no targets/id/name and no project-ids were provided
+      targetsArray.push(annotations[SNYK_ANNOTATION_TARGETNAME].trim());
+    }
+    targetsArray = targetsArray.filter(Boolean);
 
     if (targetsArray.length > 0) {
       const fullProjectByTargetList = await this.getProjectsListByTargets(

@@ -138,10 +138,13 @@ snyk:
 
 Annotation precedence when resolving targets:
 
-1. `snyk.io/targets`
-2. `snyk.io/target-id`
-3. `snyk.io/target-name`
-4. `github.com/project-slug` (fallback only when none of the above are set)
+- Start with `snyk.io/targets` (if present)
+- Then append `snyk.io/target-id`, else `snyk.io/target-name`
+- If none of the above are set, and no `snyk.io/project-ids` are present, fall back to `github.com/project-slug`
+
+Notes:
+- `snyk.io/project-ids` are always fetched and merged into the results and disable slug fallback
+- `snyk.io/exclude-project-ids` are applied afterward to filter the combined list
 
 Example:
 
