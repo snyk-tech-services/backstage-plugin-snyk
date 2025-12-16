@@ -5,7 +5,8 @@ metadata:
   description: Goof
   annotations:
     snyk.io/org-id: 361fd3c0-41d4-4ea4-ba77-09bb17890967
-    snyk.io/target-id: Snyk Demo/java-goof
+    snyk.io/target-name: Snyk Demo/java-goof
+    github.com/project-slug: should-not-be-used-when-target-name-present
 spec:
   type: service
   lifecycle: production
