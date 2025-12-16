@@ -193,3 +193,76 @@ proxy:
       pathRewrite:
         "^/proxy/snyk/": "/"
 ```
+
+## New Frontend System
+
+Follow these steps to detect and configure the Snyk plugin if you'd like to use it in an application that supports the new Backstage frontend system.
+
+### Package Detection
+
+Once you install the `backstage-plugin-snyk` package using your preferred package manager, you have to choose how the package should be detected by the app. The package can be automatically discovered when the feature discovery config is set, or it can be manually enabled via code (for more granular package customization cases).
+
+<table>
+  <tr>
+    <td>Via config</td>
+    <td>Via code</td>
+  </tr>
+  <tr>
+    <td>
+      <pre lang="yaml">
+        <code>
+# app-config.yaml
+  app:
+    # Enable package discovery for all plugins
+    packages: 'all'
+  ---
+  app:
+    # Enable package discovery only for Snyk
+    packages:
+      include:
+        - 'backstage-plugin-snyk'
+        </code>
+      </pre>
+    </td>
+    <td>
+      <pre lang="javascript">
+       <code>
+// packages/app/src/App.tsx
+import { createApp } from '@backstage/frontend-defaults';
+import snykPlugin from 'backstage-plugin-snyk/alpha';
+//...
+const app = createApp({
+  // ...
+  features: [
+    //...
+    snykPlugin,
+  ],
+});
+
+//...
+       </code>
+      </pre>
+    </td>
+  </tr>
+</table>
+
+### Extensions Configuration
+
+Currently, the plugin installs 5 extensions: 1 api, 1 page, 1 nav item (sidebar item), 1 entity page card and 1 entity page content (also known as entity page tab), see below examples of how to configure the available extensions. 
+
+```yml
+# app-config.yaml
+app:
+  extensions:
+    # Example disabling the Snyk entity card
+    - 'entity-card:snyk': false
+    # Example disabling the Snyk entity content
+    - 'entity-content:snyk': false
+    # Example customizing the Snyk entity content
+    - 'entity-content:snyk':
+        config:
+          path: '/security'
+          title: 'Security'
+          filter:
+            kind: 'component'
+```

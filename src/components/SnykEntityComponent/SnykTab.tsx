@@ -33,7 +33,7 @@ export const generateSnykTabForProject = (
 ) => {
   const genericIssuesTypeArray = Object.values(TypeDef).filter(
     (type) => type !== "license"
-  );
+  ) as Exclude<TypeDef, TypeDef.License>[];
   return ({}) => {
     const { value, loading, error } = useAsync(async () => {
       const allIssues: UnifiedIssues = await snykApi.listAllAggregatedIssues(
