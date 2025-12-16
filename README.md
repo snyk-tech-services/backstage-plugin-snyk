@@ -130,10 +130,21 @@ snyk:
 
 5. Then add one or more of the following annotations to your entities:
 
-   - `snyk.io/target-id`: Specify a single target by name or ID. Using the target ID will avoid an API call and be faster. Use this [API endpoint](https://apidocs.snyk.io/?version=2023-06-19%7Ebeta#get-/orgs/-org_id-/targets) to get the Target IDs.
    - `snyk.io/targets`: Specify one or more targets by name or ID. Using the target ID will avoid an API call and be faster. Use this [API endpoint](https://apidocs.snyk.io/?version=2023-06-19%7Ebeta#get-/orgs/-org_id-/targets) to get the Target IDs.
+   - `snyk.io/target-id`: Specify a single target by name or ID. Using the target ID will avoid an API call and be faster. Use this [API endpoint](https://apidocs.snyk.io/?version=2023-06-19%7Ebeta#get-/orgs/-org_id-/targets) to get the Target IDs.
+   - `snyk.io/target-name`: Specify a single target by display name. Prefer `snyk.io/target-id` when possible.
    - `snyk.io/project-ids`: The project ID (see slug in URL or ID in project settings). If there are multiple projects (e.g., multiple package.json or pom files), add them comma-separated.
    - `snyk.io/exclude-project-ids`: Exclude specific projects you might not want.
+
+Annotation precedence when resolving targets:
+
+- Start with `snyk.io/targets` (if present)
+- Then append `snyk.io/target-id`, else `snyk.io/target-name`
+- If none of the above are set, and no `snyk.io/project-ids` are present, fall back to `github.com/project-slug`
+
+Notes:
+- `snyk.io/project-ids` are always fetched and merged into the results and disable slug fallback
+- `snyk.io/exclude-project-ids` are applied afterward to filter the combined list
 
 Example:
 
