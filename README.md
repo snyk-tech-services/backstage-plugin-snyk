@@ -17,6 +17,13 @@ The Snyk plugin displays security details from [snyk.io](https://snyk.io/).
 
 2. Install the plugin:
 
+First install if not done already the yarn plugin. It handles dependencies alignment for us.
+```bash
+yarn plugin import https://versions.backstage.io/v1/tags/main/yarn-plugin
+```
+
+Then install the plugin:
+
 ```bash
 yarn --cwd packages/app add backstage-plugin-snyk
 ```
