@@ -1,3 +1,5 @@
+last update: 2025-12-17 
+
 # Snyk Backstage Plugin
 
 The Snyk plugin displays security details from [snyk.io](https://snyk.io/).
