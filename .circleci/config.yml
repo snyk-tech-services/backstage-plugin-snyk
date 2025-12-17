@@ -11,20 +11,24 @@ jobs:
       steps:
         - checkout
         - run:
+            name: "Enable Corepack / Yarn 4"
+            command: |
+              corepack prepare yarn@4.10.3 --activate
+        - run:
             name: "Install deps"
             command: |
-              yarn install
+              corepack yarn install
         - run:
             name: "Build"
             command: |
-              yarn tsc
-        - run: yarn add ms
-        - run: yarn remove ms
+              corepack yarn run build
+        - run: corepack yarn add ms
+        - run: corepack yarn remove ms
         - snyk/scan:
             fail-on-issues: true
             severity-threshold: high
             monitor-on-build: true
-        - run: yarn run semantic-release
+        - run: corepack yarn run semantic-release
 
   build-test:
       docker:
@@ -34,13 +38,17 @@ jobs:
       steps:
         - checkout
         - run:
+            name: "Enable Corepack / Yarn 4"
+            command: |
+              corepack prepare yarn@4.10.3 --activate
+        - run:
             name: "Install deps"
             command: |
-              yarn install
+              corepack yarn install
         - run:
             name: "Build"
             command: |
-              yarn tsc
+              corepack yarn run build
         - snyk/scan:
             fail-on-issues: true
             severity-threshold: high
