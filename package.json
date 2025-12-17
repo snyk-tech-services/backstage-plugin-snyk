@@ -8,14 +8,20 @@
     "access": "public"
   },
   "exports": {
-    ".": "./src/index.ts",
-    "./alpha": "./src/alpha/index.ts",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./alpha": {
+      "types": "./dist/src/alpha/index.d.ts",
+      "default": "./dist/src/alpha/index.js"
+    },
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
       "alpha": [
-        "src/alpha/index.ts"
+        "dist/src/alpha/index.d.ts"
       ],
       "package.json": [
         "package.json"
