@@ -16,7 +16,7 @@ The Snyk plugin displays security details from [snyk.io](https://snyk.io/).
 2. Install the plugin:
 
 ```bash
-yarn add --cwd packages/app backstage-plugin-snyk
+yarn --cwd packages/app add backstage-plugin-snyk
 ```
 
 3. Add the plugin to the `EntityPage.tsx` file. Feel free to rename the title to Security, Snyk, Vulns, or whatever you prefer.
