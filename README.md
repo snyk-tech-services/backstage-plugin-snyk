@@ -169,6 +169,11 @@ spec:
 
 More examples can be found [here](https://github.com/snyk-tech-services/backstage-plugin-snyk/tree/develop/test/fixtures).
 
+## New FrontEnd System
+
+Nice contributions helped us move to the new frontend system. It's ready to be used.
+Instructions are available [here](https://github.com/snyk-tech-services/backstage-plugin-snyk/pull/212).
+
 ## Migration Steps from Plugin Version 1.x to 2.x
 
 - Update the proxy target to not contain `/v1`.
