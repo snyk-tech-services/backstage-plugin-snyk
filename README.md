@@ -180,6 +180,48 @@ Instructions are available [here](https://github.com/snyk-tech-services/backstag
 
 - Update the proxy target to not contain `/v1`.
 
+## Releasing Process
+
+This plugin uses a special versioning system for Backstage dependencies to ensure compatibility with different Backstage versions.
+
+### Version Bumping Overview
+
+The plugin uses `backstage:^` syntax for Backstage-related dependencies in development, which gets converted to explicit versions during publishing:
+
+- **Development**: `backstage:^` (flexible, uses Backstage Yarn plugin)
+- **Published**: `^1.7.6` (explicit, npm-compatible)
+
+### Automated Release (CI/CD)
+
+The CircleCI pipeline handles version bumping automatically:
+
+1. **Pre-publish**: Removes Backstage Yarn plugin and converts `backstage:^` → explicit versions
+2. **Publish**: Runs `semantic-release` to publish to npm
+3. **Post-publish**: Restores Backstage Yarn plugin and `backstage:^` syntax
+
+### Manual Release
+
+For local publishing, manually run:
+
+```bash
+# Remove plugin and bump versions
+yarn plugin remove @yarnpkg/plugin-backstage
+yarn backstage-cli versions:bump --skip-install
+
+# Publish to npm
+npm publish
+
+# Restore plugin and backstage:^ syntax
+yarn plugin import https://versions.backstage.io/v1/releases/1.47.3/yarn-plugin
+yarn backstage-cli versions:bump --skip-install
+```
+
+### Version Resolution
+
+- `backstage.json` defines the target Backstage version
+- `versions:bump` converts `backstage:^` to explicit versions based on this target
+- Published packages have fixed Backstage dependency versions for stability
+
 ## Troubleshooting
 
 - Missing or incorrect token set in the backend proxy.
