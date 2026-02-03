@@ -28,21 +28,7 @@ jobs:
             fail-on-issues: true
             severity-threshold: high
             monitor-on-build: true
-        - run:
-            name: "Prepare for publish - Remove Backstage plugin and bump versions"
-            command: |
-              corepack yarn plugin remove @yarnpkg/plugin-backstage
-              corepack yarn backstage-cli versions:bump --skip-install
-        - run:
-            name: "Publish with semantic-release"
-            command: |
-              corepack yarn run semantic-release
-        - run:
-            name: "Restore Backstage plugin for development"
-            command: |
-              corepack yarn plugin import https://versions.backstage.io/v1/releases/1.47.3/yarn-plugin
-              corepack yarn backstage-cli versions:bump --skip-install
-            when: always
+        - run: corepack yarn run semantic-release
 
   build-test:
       docker:
