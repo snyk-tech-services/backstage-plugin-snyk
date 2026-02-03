@@ -38,7 +38,9 @@
   "scripts": {
     "build": "tsc",
     "start": "backstage-cli package start --config ./dev/app-config.yaml",
-    "test": "backstage-cli test"
+    "test": "backstage-cli test",
+    "prepublishOnly": "yarn plugin remove @yarnpkg/plugin-backstage && yarn backstage-cli versions:bump --skip-install",
+    "postpublish": "yarn plugin import https://versions.backstage.io/v1/releases/1.47.3/yarn-plugin && yarn backstage-cli versions:bump --skip-install"
   },
   "dependencies": {
     "@backstage/catalog-model": "backstage:^",
@@ -77,7 +79,9 @@
   },
   "resolutions": {
     "@backstage/frontend-plugin-api": "0.13.1",
-    "jws": "3.2.3"
+    "jws": "3.2.3",
+    "fast-xml-parser": "5.3.4",
+    "qs": "6.14.1"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0",
