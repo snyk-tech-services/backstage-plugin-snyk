@@ -6,24 +6,23 @@ jobs:
   build-test-monitor:
       docker:
         # specify the version
-        - image: cimg/node:20.18
+        - image: cimg/node:24.19.0
 
       steps:
         - checkout
         - run:
             name: "Enable Corepack / Yarn 4"
             command: |
-              corepack prepare yarn@4.10.3 --activate
+              corepack prepare yarn@4.18.1 --activate
         - run:
             name: "Install deps"
             command: |
-              corepack yarn install
+              corepack yarn install --immutable
         - run:
             name: "Build"
             command: |
               corepack yarn run build
-        - run: corepack yarn add ms
-        - run: corepack yarn remove ms
+        - run: corepack yarn test --watch=false --runInBand
         - snyk/scan:
             fail-on-issues: true
             severity-threshold: high
@@ -33,22 +32,23 @@ jobs:
   build-test:
       docker:
         # specify the version
-        - image: cimg/node:20.18
+        - image: cimg/node:24.19.0
 
       steps:
         - checkout
         - run:
             name: "Enable Corepack / Yarn 4"
             command: |
-              corepack prepare yarn@4.10.3 --activate
+              corepack prepare yarn@4.18.1 --activate
         - run:
             name: "Install deps"
             command: |
-              corepack yarn install
+              corepack yarn install --immutable
         - run:
             name: "Build"
             command: |
               corepack yarn run build
+        - run: corepack yarn test --watch=false --runInBand
         - snyk/scan:
             fail-on-issues: true
             severity-threshold: high
