@@ -1,7 +1,7 @@
 {
   "name": "backstage-plugin-snyk",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "version": "0.0.0-development",
   "license": "Apache-2.0",
   "publishConfig": {
@@ -38,50 +38,50 @@
   "scripts": {
     "build": "tsc",
     "start": "backstage-cli package start --config ./dev/app-config.yaml",
-    "test": "backstage-cli test",
+    "test": "backstage-cli package test",
     "prepublishOnly": "yarn plugin remove @yarnpkg/plugin-backstage && yarn backstage-cli versions:bump --skip-install",
-    "postpublish": "yarn plugin import https://versions.backstage.io/v1/releases/1.47.3/yarn-plugin && yarn backstage-cli versions:bump --skip-install"
+    "postpublish": "yarn plugin import https://versions.backstage.io/v1/releases/1.56.2/yarn-plugin && yarn backstage-cli versions:bump --skip-install"
   },
   "dependencies": {
     "@backstage/catalog-model": "backstage:^",
     "@backstage/core-compat-api": "backstage:^",
     "@backstage/core-components": "backstage:^",
     "@backstage/core-plugin-api": "backstage:^",
+    "@backstage/errors": "backstage:^",
+    "@backstage/filter-predicates": "backstage:^",
     "@backstage/frontend-plugin-api": "backstage:^",
     "@backstage/plugin-catalog-react": "backstage:^",
+    "@material-ui/core": "^4.12.4",
+    "@material-ui/lab": "^4.0.0-alpha.61",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
-    "@snyk/dep-graph": "2.8.1",
+    "@snyk/dep-graph": "2.16.11",
     "react-circular-progressbar": "^2.1.0",
     "react-use": "^17.4.0"
   },
   "devDependencies": {
     "@backstage/cli": "backstage:^",
-    "@backstage/dev-utils": "backstage:^",
+    "@backstage/cli-defaults": "backstage:^",
+    "@backstage/core-app-api": "backstage:^",
     "@backstage/frontend-defaults": "backstage:^",
     "@backstage/plugin-catalog": "backstage:^",
     "@backstage/test-utils": "backstage:^",
-    "@testing-library/jest-dom": "^6.1.4",
-    "@testing-library/react": "^14.2.0",
-    "@testing-library/user-event": "^14.5.1",
-    "@types/jest": "^29.5.8",
-    "@types/node": "^20.9.0",
+    "@jest/environment-jsdom-abstract": "^30.5.2",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@types/jest": "^30.0.0",
+    "@types/jsdom": "^27.0.0",
+    "@types/node": "^24.19.2",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.18",
-    "msw": "^2.0.5",
-    "node-fetch": "^3.3.2",
+    "jest": "^30.5.2",
+    "jsdom": "^27.4.0",
     "react": "^18.0.2",
     "react-dom": "^18.0.2",
     "react-router-dom": "^6.3.0",
-    "semantic-release": "^24.2.0",
-    "snyk": "^1.1243.0",
+    "semantic-release": "^25.0.9",
     "typescript": "^5.7.2"
-  },
-  "resolutions": {
-    "@backstage/frontend-plugin-api": "0.13.1",
-    "jws": "3.2.3",
-    "fast-xml-parser": "5.3.4",
-    "qs": "6.14.1"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0",
@@ -103,5 +103,5 @@
       "main"
     ]
   },
-  "packageManager": "yarn@4.10.3"
+  "packageManager": "yarn@4.18.1"
 }

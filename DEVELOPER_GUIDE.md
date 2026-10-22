@@ -1,6 +1,8 @@
 # How to work on this plugin
 
-## Note: This guide assumes you use yarn v1.
+## Prerequisites
+
+Use Node.js 24.10+ (Node.js 24) or 22.14+ (Node.js 22), Corepack, and a Backstage app using React 18.3 and React Router 6.30. Run `corepack enable` and use the Yarn version pinned in `package.json`.
 
 1. Clone this plugin repository
 

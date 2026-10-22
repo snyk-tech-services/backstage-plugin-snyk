@@ -1,4 +1,4 @@
-import { EntityPredicate } from "@backstage/plugin-catalog-react/alpha";
+import type { FilterPredicate } from "@backstage/filter-predicates";
 import {
   SNYK_ANNOTATION_ORG,
   SNYK_ANNOTATION_ORGS,
@@ -8,7 +8,7 @@ import {
   SNYK_ANNOTATION_TARGETS,
 } from "../config";
 
-export const isSnykAvailableEntityPredicate: EntityPredicate = {
+export const isSnykAvailableEntityPredicate: FilterPredicate = {
   $all: [
     {
       $any: [
